@@ -1,0 +1,34 @@
+body {
+   background: #eeeeee;
+   font-family: tahoma, verdana, sans serif;
+}
+
+#mainCanvas {
+   background: #ffffff;
+   position:absolute;
+   z-index: 0;
+   left: 10px;
+   top: 10px;
+   box-shadow: 4px 4px 8px rgba(0,0,0,0.5);
+}
+
+#controls {
+   position: absolute;
+    z-index: 2;
+   left: 25px;
+   top: 25px;
+}
+
+label{
+  font-size: 12px;
+  margin-right:0.75em;
+}
+
+#topCavas{
+  background: rgba(0,0,0,0);
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  z-index: 1;
+  cursor: pointer;
+}

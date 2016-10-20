@@ -1,0 +1,16 @@
+{
+  "name": "semester-project",
+  "version": "1.0.0",
+  "description": "An Online Colorig Book",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Kelsey Weinman",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^3.7.1",
+    "eslint-config-airbnb": "^12.0.0",
+    "eslint-plugin-import": "^2.0.1"
+  }
+}

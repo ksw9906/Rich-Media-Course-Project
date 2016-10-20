@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Canvas Paint App</title>
+    <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    <script type="application/javascript" src="../src/main.js"></script>
+</head>
+<body>
+	<canvas id="mainCanvas" width="700" height="500">
+		Get a real browser!
+	</canvas>
+
+	<canvas id="topCavas" width="700" height="500">
+		Get a real browser!
+	</canvas>
+	
+	<div id="controls">
+		<label>Tool:
+			<select id="toolChooser">
+				<option value="toolPencil">Pencil</option>
+				<option value="toolRectangle">Rectangle</option>
+				<option value="toolLine">Line</option>
+				<option value="toolCircle">Circle</option>
+    		</select>
+    	</label>
+
+    	<label>Stroke Color:
+    		<select id="strokeStyleChooser">
+    			<option value="Red">Red</option>
+    			<option value="Orange">Orange</option>
+    			<option value="Yellow">Yellow</option>
+    			<option value="Green">Green</option>
+    			<option value="Blue">Blue</option>
+    			<option value="BlueViolet">Purple</option>
+    			<option value="HotPink">Pink</option>
+    			<option value="Black">Black</option>
+    			<option value="White">White</option>
+    		</select>
+    	</label>
+
+    	<label>Fill Color:
+    		<select id="fillStyleChooser">
+    			<option value="Blue">Blue</option>
+    			<option value="Red">Red</option>
+    			<option value="Orange">Orange</option>
+    			<option value="Yellow">Yellow</option>
+    			<option value="Green">Green</option>
+    			<option value="BlueViolet">Purple</option>
+    			<option value="HotPink">Pink</option>
+    			<option value="Black">Black</option>
+    			<option value="White">White</option>
+    			<option value="Gradient">Gradient</option>
+    		</select>
+    	</label>
+    	
+    	<label>Line Width: 
+			<select id="lineWidthChooser">
+				<option value="1">1</option>
+				<option value="2">2</option>
+        		<option value="3" selected>3</option>
+        		<option value="4">4</option>
+				<option value="5">5</option>
+        		<option value="6">6</option>
+        		<option value="7">7</option>
+				<option value="8">8</option>
+        		<option value="9">9</option>
+        		<option value="10">10</option>
+    		</select>
+    	</label>
+    	
+    	
+    	<span><input id="clearButton" type="button" value="Clear"/></span>
+    	<span><input id="exportButton" type="button" value="Export"/></span>
+    </div>
+
+</body>
+</html>
