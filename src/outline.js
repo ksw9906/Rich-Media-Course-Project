@@ -2,15 +2,71 @@
 window.onload = init;
 
 // GLOBALS
-var canvas,ctx,dragging=false,lineWidth;
-var currentTool, origin, topCavas, topCtx;
+var canvas,ctx,dragging=false,lineWidth,strokeStyle;
+var currentTool, fillStyle, origin, topCavas, topCtx;
 var rectX,rectY,rectW,rectH,circX,circY,circRad;
 
 // CONSTANTS
 var DEFAULT_LINE_WIDTH = 3;
+var DEFAULT_STROKE_STYLE = "red";
+//var DEFAULT_FILL_STYLE = "blue";
 var TOOL_RECTANGLE = "toolRectangle";
 var TOOL_CIRCLE = "toolCircle";
 
+var draws = {};
+
+// FUNCTIONS
+const draw = () => {
+  topCtx.globalAlpha = 1;
+  doClear();
+  var keys = Object.keys(draws);
+  
+  for(var i = 0; i < keys.length; i++){
+    const drawCall = draws[keys[i]];
+    topCtx.strokeStyle = drawCall.stroke;
+    topCtx.lineWidth = drawCall.line;
+    
+//    if(drawCall.fill != "none"){
+//      topCtx.fillStyle = drawCall.fill;
+//      topCtx.fillRect(drawCall.x,drawCall.y,draw.w,draw.h);
+//    }
+    
+    if(drawCall.shape === 'rect'){
+      topCtx.strokeRect(drawCall.x,drawCall.y,drawCall.w,drawCall.h);      
+    } else if(drawCall.shape === 'circle'){
+      topCtx.beginPath();
+      topCtx.arc(drawCall.x,drawCall.y,drawCall.rad,0,Math.PI * 2,false);
+      topCtx.closePath();
+//      topCtx.fill();
+      topCtx.stroke();
+    }
+
+    ctx.drawImage(topCavas,0,0);
+    clearTopCanvas();    
+  }
+  console.log(draws);
+}
+
+const setColorEvents = () => {
+  document.querySelector('#Blue').style.backgroundColor = "Blue";
+  document.querySelector('#Blue').onclick = function(e){strokeStyle = e.target.id;};
+  document.querySelector('#Red').style.backgroundColor = "Red";
+  document.querySelector('#Red').onclick = function(e){strokeStyle = e.target.id;};
+  document.querySelector('#Orange').style.backgroundColor = "Orange";
+  document.querySelector('#Orange').onclick = function(e){strokeStyle = e.target.id;};
+  document.querySelector('#Yellow').style.backgroundColor = "Yellow";
+  document.querySelector('#Yellow').onclick = function(e){strokeStyle = e.target.id;};
+  document.querySelector('#Green').style.backgroundColor = "Green";
+  document.querySelector('#Green').onclick = function(e){strokeStyle = e.target.id;};
+  document.querySelector('#BlueViolet').style.backgroundColor = "BlueViolet";
+  document.querySelector('#BlueViolet').onclick = function(e){strokeStyle = e.target.id;};
+  document.querySelector('#HotPink').style.backgroundColor = "HotPink";
+  document.querySelector('#HotPink').onclick = function(e){strokeStyle = e.target.id;};
+  document.querySelector('#Black').style.backgroundColor = "Black";
+  document.querySelector('#Black').onclick = function(e){strokeStyle = e.target.id;};
+  document.querySelector('#White').style.backgroundColor = "White";
+  document.querySelector('#White').onclick = function(e){strokeStyle = e.target.id;};
+}
 
 // FUNCTIONS
 function init(){
@@ -18,6 +74,8 @@ function init(){
     canvas = document.querySelector('#mainCanvas');
     ctx = canvas.getContext('2d');
     lineWidth = DEFAULT_LINE_WIDTH;
+    strokeStyle = DEFAULT_STROKE_STYLE;
+//    fillStyle = DEFAULT_FILL_STYLE;
     currentTool = TOOL_RECTANGLE;
     origin = {}; // empty object
     topCavas = document.querySelector('#topCavas');
@@ -25,6 +83,8 @@ function init(){
 
     // set initial properties of the graphics context 
     topCtx.lineWidth = ctx.lineWidth = lineWidth;
+    topCtx.strokeStyle = ctx.strokeStyle = strokeStyle;
+//    topCtx.fillStyle = ctx.fillStyle= fillStyle;
     topCtx.lineCap = ctx.lineCap = "round"; // "butt", "round", "square" (default "butt")
     topCtx.lineJoin = ctx.lineJoin = "round"; // "round", "bevel", "miter" (default "miter")
 
@@ -43,13 +103,31 @@ function init(){
         lineWidth = e.target.value;
     }
 
+//    document.querySelector('#strokeStyleChooser').onchange = doStrokeStyleChange;
+//
+//    function doStrokeStyleChange (e) {
+//        strokeStyle = e.target.value;
+//    }
+    
+    setColorEvents();
+
     document.querySelector('#toolChooser').onchange = function(e){
         currentTool = e.target.value;
         console.log("currentTool=" + currentTool);
     }
 
-    document.querySelector("#clearButton").onclick = doClear;
+    document.querySelector("#clearButton").onclick = function(){
+      draws = {};
+      doClear();
+    };
     document.querySelector("#exportButton").onclick = doExport;
+    document.querySelector("#undoButton").onclick = function(){
+      var keys = Object.keys(draws);
+      if(keys.length > 0){
+        delete draws[keys[keys.length-1]];
+        draw();
+      }
+    }
 }
 
 
@@ -59,7 +137,12 @@ function doMousedown(e){
     var mouse = getMouse(e);
 
     switch(currentTool){
+//        case TOOL_PENCIL:
+//            ctx.beginPath();
+//            ctx.moveTo(mouse.x, mouse.y);
+//            break;
         case TOOL_RECTANGLE:
+//        case TOOL_LINE:
             origin.x = mouse.x;
             origin.y = mouse.y;
             break;
@@ -77,8 +160,6 @@ function doMousemove(e) {
     // get location of mouse in canvas coordiates
     var mouse =  getMouse(e);
 
-    // PENCIL TOOL
-    // set ctx.strokeStyle and ctx.lineWidth to correct global values
     switch(currentTool)
     {
         case TOOL_RECTANGLE:
@@ -87,11 +168,14 @@ function doMousemove(e) {
             rectW = Math.abs(mouse.x - origin.x);
             rectH = Math.abs(mouse.y - origin.y);
 
+            topCtx.strokeStyle = strokeStyle;
+//            topCtx.fillStyle = fillStyle;
             topCtx.lineWidth = lineWidth;
 
             clearTopCanvas();
             topCtx.globalAlpha = 0.3;
 
+//            topCtx.fillRect(rectX,rectY,rectW,rectH);
             topCtx.strokeRect(rectX,rectY,rectW,rectH);
             break;
 
@@ -102,6 +186,8 @@ function doMousemove(e) {
             var circH = Math.abs(mouse.y - origin.y);
             circRad = Math.sqrt((circW * circW) + (circH * circH)); 
 
+            topCtx.strokeStyle = strokeStyle;
+//            topCtx.fillStyle = fillStyle;
             topCtx.lineWidth = lineWidth;
 
             clearTopCanvas();
@@ -110,6 +196,7 @@ function doMousemove(e) {
             topCtx.beginPath();
             topCtx.arc(origin.x,origin.y,circRad,0,Math.PI * 2,false);
             topCtx.closePath();
+//            topCtx.fill();
             topCtx.stroke();
 
             break;
@@ -120,23 +207,20 @@ function doMousemove(e) {
 function doMouseup(e) {
     switch(currentTool){
         case TOOL_RECTANGLE:
-            topCtx.globalAlpha = 1;
-            topCtx.strokeRect(rectX,rectY,rectW,rectH);
             if(dragging){
                 ctx.drawImage(topCavas,0,0);
                 clearTopCanvas();
             }
+            draws[Date.now()] = {shape:'rect', x:rectX, y:rectY, w:rectW, h:rectH, stroke: strokeStyle, line: lineWidth};
+            draw();
             break;
         case TOOL_CIRCLE:
-            topCtx.globalAlpha = 1;
-            topCtx.beginPath();
-            topCtx.arc(origin.x,origin.y,circRad,0,Math.PI * 2,false);
-            topCtx.closePath();
-            topCtx.stroke();
             if(dragging){
                 ctx.drawImage(topCavas,0,0);
                 clearTopCanvas();
             }
+            draws[Date.now()] = {shape:'circle', x:origin.x, y:origin.y, rad:circRad, stroke: strokeStyle, line: lineWidth};
+            draw();
             break;
     }
 
@@ -151,7 +235,6 @@ function doMouseout(e) {
             break;
     }
     dragging = false;
-
 }
 
 function clearTopCanvas () {
