@@ -1,1 +1,1 @@
-# MVC-Project
+# Rich-Media-Course-Project

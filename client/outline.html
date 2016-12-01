@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Canvas Paint App</title>
+    <link rel="stylesheet" type="text/css" href="../css/styles.css"/>
+    <script type="application/javascript" src="../css/jquery-3.1.1.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://bootswatch.com/readable/bootstrap.min.css"/>
+    <script type="application/javascript" src="../css/bootstrap.min.js"></script>
+    <script type="application/javascript" src="../src/outline.js"></script>
+</head>
+<body>
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">Kelsey Weinman</a>
+      </div>
+
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
+        <ul class="nav navbar-nav">
+          <li><a href="index.html">Color</a></li>
+          <li class="active"><a href="outline.html">Outline<span class="sr-only">(current)</span></a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  
+  <canvas id="mainCanvas" width="700" height="500">
+      Get a real browser!
+  </canvas>
+
+  <canvas id="topCavas" width="700" height="500">
+      Get a real browser!
+  </canvas>
+
+<!--  <label id="tools" class="col-lg-2 control-label">Tool:-->
+    <select id="toolChooser" class="form-control">
+      <option value="toolRectangle">Rectangle</option>
+      <option value="toolCircle">Circle</option>
+    </select>
+<!--  </label>-->
+
+  <p id="strokeLabel">Stroke Color:</p>
+  <div id="colors" class="btn-group-vertical">
+    <a id="Blue" href="#" class="btn btn-default fillColor"></a>
+    <a id="Red" href="#" class="btn btn-default fillColor"></a>
+    <a id="Orange" href="#" class="btn btn-default fillColor"></a>
+    <a id="Yellow" href="#" class="btn btn-default fillColor"></a>
+    <a id="Green" href="#" class="btn btn-default fillColor"></a>
+    <a id="BlueViolet" href="#" class="btn btn-default fillColor"></a>
+    <a id="HotPink" href="#" class="btn btn-default fillColor"></a>
+    <a id="Black" href="#" class="btn btn-default fillColor"></a>
+    <a id="White" href="#" class="btn btn-default fillColor"></a>
+  </div>
+
+<!--      <label>Line Width: -->
+          <select id="lineWidthChooser" class="form-control">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3" selected>3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+          </select>
+<!--      </label>-->
+  
+  <div id="controls" class="btn-group-vertical">
+    <a href="#" class="btn btn-default" id="clearButton">Clear</a>
+    <a href="#" class="btn btn-default" id="exportButton">Export</a>
+    <a href="#" class="btn btn-default" id="undoButton">Undo</a>
+  </div>
+</body>
+</html>
