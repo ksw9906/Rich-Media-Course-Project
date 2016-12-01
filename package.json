@@ -1,11 +1,11 @@
 {
-  "name": "Logins",
+  "name": "Semester_Project",
   "version": "1.0.0",
   "engines": {
     "node": "6.5.0",
     "npm": "3.10.3"
   },
-  "description": "A Simple Login Example using Node.js, Mongo and Redis",
+  "description": "An online coloring book",
   "main": "./src/app.js",
   "scripts": {
     "start": "node ./src/app.js",
@@ -18,7 +18,7 @@
     "Redis",
     "Login"
   ],
-  "author": "Cody Van De Mark",
+  "author": "Kelsey Weinman",
   "license": "Apache 2.0",
   "dependencies": {
     "body-parser": "^1.15.0",
@@ -38,5 +38,5 @@
     "eslint": "^3.8.1",
     "eslint-config-airbnb": "^12.0.0",
     "eslint-plugin-import": "^2.0.1"
-  },
+  }
 }
