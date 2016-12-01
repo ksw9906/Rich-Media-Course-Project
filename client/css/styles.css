@@ -1,0 +1,193 @@
+body {
+   font-family: tahoma, verdana, sans serif;
+}
+
+#mainCanvas {
+   background: #ffffff;
+   position:absolute;
+   z-index: 0;
+   left: 20px;
+   top: 90px;
+   box-shadow: 0px 0px 8px rgba(0,0,0,0.5);
+}
+
+#controls {
+   position: absolute;
+   z-index: 2;
+   left: 740px;
+   top: 472px;
+   width: 125px;
+}
+
+label{
+  font-size: 12px;
+  margin-right:0.75em;
+}
+
+#topCavas{
+  background: rgba(0,0,0,0);
+  position: absolute;
+  left: 20px;
+  top: 90px;
+  z-index: 1;
+  cursor: pointer;
+}
+
+#colors{
+  position: absolute;
+  top: 115px;
+  left: 740px;
+}
+
+.fillColor{
+  width: 125px !important;
+  height: 30px;
+}
+
+#fillLabel{
+  position: absolute;
+  top: 90px;
+  left: 740px;
+}
+
+#strokeLabel{
+  position: absolute;
+  top: 90px;
+  left: 740px;
+}
+
+#toolChooser{
+  position: absolute;
+  top: 380px;
+  left: 740px;
+  width: 125px;
+}
+
+#lineWidthChooser{
+  position: absolute;
+  top: 425px;
+  left: 740px;
+  width: 125px;
+}
+
+#canvases{
+  overflow: auto;
+  margin: 10px;
+}
+
+.templateCanvas{
+  margin-bottom: 5px;
+/*  float: left;*/
+  width: 100%;
+  box-shadow: 0px 0px 8px rgba(0,0,0,0.5);
+  cursor: pointer;
+}
+
+/*http://www.w3schools.com/howto/howto_css_modals.asp*/
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.4);
+}
+
+.modalContent{
+  background-color: #f7f7f7;
+  margin: 15% auto;
+  padding: 20px;
+  width: 80%; 
+}
+
+.modalButton{
+  margin-top: 10px;
+}
+
+.modalContent label{
+  font-size: 12pt;
+  right: 10px;
+}
+
+#templates{
+  display: none;
+}
+
+#hiddenCanvas{
+  display: none;
+}
+
+#calls{
+  display: none;
+}
+
+#loginAlert, #signinAlert, #templateAlert, #fillAlert{
+  display: none;
+}
+
+.mainForm {
+    height: 300px;
+    width: 350px;
+    margin: 0 auto;
+    padding-top: 200px;
+    font-size: 1.2em;
+}
+
+.mainForm h3 {
+    text-align: center;
+}
+
+.mainForm label {
+    display: inline-block;
+    width: 100px;
+    margin-right: 10px;
+    text-align: right;
+    font-size: 15pt;
+}
+
+#user, #pass, #pass2 {
+    text-align: center;
+    font-size: 1.1em;
+    width: 180px;
+    border-radius: 6px;
+}
+
+#user:focus, #pass:focus, #pass2:focus {
+    outline: none;
+    box-shadow: 0px 0px 1px 1px #55acee;
+}
+
+.templateDiv{
+  width:280px;
+  height:auto;
+  float:left;
+  margin: 5px;
+}
+
+.deleteButton{
+  position: relative;
+  top: -200px;
+  left: 250px;
+  width: 20px;
+  height: 25px;
+  background-color: rgba(255,255,255,.75);
+  text-align: center;
+  /*https://www.iconfinder.com/iconsets/30_Free_Black_ToolBar_Icons*/
+  background-image: url("../img/trash_can.png");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+@media screen and (max-width: 770px){
+  #mainCanvas, #topCavas{
+    position: absolute;
+    top: 200px;
+  }
+  #controls{
+    position: absolute;
+    top: 582px;
+  }
+}

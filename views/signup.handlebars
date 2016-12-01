@@ -1,0 +1,43 @@
+<html lang="en">
+<body>
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/">Vibrancy</a>
+      </div>
+
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
+        <ul class="nav navbar-nav">
+          <li><a href="/login">Login</a></li>
+          <li class="active"><a href="/signup">Sign Up</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  
+  <div id="signinAlert" class="alert alert-dismissible alert-danger">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <p id="errorMessage"></p>
+  </div> 
+  
+  <section id="signup">
+    <form id="signupForm" name="signupForm" action="/signup" method="POST" class="mainForm">
+      <label for="username">Username: </label>
+      <input id="user" type="text" name="username" placeholder="username"/>
+      <label for="pass">Password: </label>
+      <input id="pass" type="password" name="pass" placeholder="password"/>
+      <label for="pass2">Password: </label>
+      <input id="pass2" type="password" name="pass2" placeholder="retype password"/>
+      <input type="hidden" name="_csrf" value={{csrfToken}} /><a id="signupSubmit" href="#" class="btn btn-primary">Sign up</a>
+    </form>
+  </section>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
+  <script src="/assets/client.js" type="text/babel"></script>
+</body>
+</html>
