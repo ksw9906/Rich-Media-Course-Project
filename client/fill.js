@@ -6,21 +6,49 @@ var canvas,ctx,dragging=false,lineWidth,strokeStyle;
 var currentTool, fillStyle, origin, topCavas, topCtx;
 var rectX,rectY,rectW,rectH,circX,circY,circRad;
 
-// CONSTANTS
-var DEFAULT_FILL_STYLE = "blue";
+//Fill code: https://github.com/williammalone/HTML5-Paint-Bucket-Tool/blob/master/html5-canvas-paint-bucket.js
+var colors =
+    {
+      red:{r:255, g:0, b:0},
+      orange:{r:255, g:191, b:0},
+      yellow:{r:255, g:255, b:0},
+      green:{r:0, g:153, b:38},
+      blue:{r:0, g:0, b:255},
+      purple:{r:191, g:0, b:255},
+      pink:{r:255, g:102, b:179},
+      white:{r:255, g:255, b:255}
+    }
 
-//Default draws
-var draws = {
-//  3:{shape:'rect',x:190,y:202,w:290,h:97,fill:'white',stroke:'red', line:3},
-//  2:{shape:'rect',x:150,y:170,w:370,h:160,fill:'white',stroke:'orange', line:3},
-//  1:{shape:'rect',x:122,y:150,w:428,h:201,fill:'white',stroke:'yellow', line:3},
-//  4:{shape:'rect',x:231,y:230,w:209,h:40,fill:'white',stroke:'green', line:3},
+
+var colorToString = (r,g,b) =>{
+  return "rgb("+ r + "," + g + "," + b +")";
 };
 
+var colorToObject = (color) => {
+  var array = color.split(",");
+  var r = parseInt(array[0].substring(array[0].indexOf("(") + 1));
+  var g = parseInt(array[1]);
+  var b = parseInt(array[2].substring(0,array[2].indexOf(")")));
+  return {r:r,g:g,b:b};
+}
+
+var colorLayerData, outlineLayerData;
+
+// CONSTANTS
+var DEFAULT_FILL_STYLE = colorToString(colors.red.r, colors.red.g, colors.red.b);
+
+//Default draws
+var draws = {};
+
 // FUNCTIONS
-const draw = () => {
+const draw = (clearing) => {
   topCtx.globalAlpha = 1;
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  
+  if(colorLayerData){
+    ctx.putImageData(colorLayerData,0,0);
+  }
+  
   var keys = Object.keys(draws);
   
   for(var i = 0; i < keys.length; i++){
@@ -30,7 +58,9 @@ const draw = () => {
     
     if(drawCall.fill != "none"){
       topCtx.fillStyle = drawCall.fill;
-      topCtx.fillRect(drawCall.x,drawCall.y,drawCall.w,drawCall.h);
+      if(clearing){
+        topCtx.fillRect(drawCall.x,drawCall.y,drawCall.w,drawCall.h);
+      }
     }
     
     if(drawCall.shape === 'rect'){
@@ -39,83 +69,144 @@ const draw = () => {
       topCtx.beginPath();
       topCtx.arc(drawCall.x,drawCall.y,drawCall.rad,0,Math.PI * 2,false);
       topCtx.closePath();
-      topCtx.fill();
+      if(clearing){
+        topCtx.fill();        
+      }
+
       topCtx.stroke();
     }
     
     ctx.drawImage(topCavas,0,0);
     clearTopCanvas();    
   }
-}
+};
 
-const inShape = (mouse) => {
-  var keys = Object.keys(draws);
-  var shapes = [];
-  for(var i = 0; i < keys.length; i++){
-    const shape = draws[keys[i]];
-    if(shape.shape === 'rect'){
-      if(mouse.x > shape.x && mouse.x < (shape.x + shape.w)){
-        if(mouse.y > shape.y && mouse.y < (shape.y + shape.h)){
-          shapes.push(draws[keys[i]]);
-        }
-      } 
-    } else if(shape.shape === 'circle'){
-      var distance = Math.sqrt(Math.pow((mouse.x - shape.x),2) + Math.pow((mouse.y - shape.y),2));
-      if(distance < shape.rad){
-        shapes.push(draws[keys[i]]);
+const matchOutlineColor = (r,g,b,a) => {
+  return (r + g + b === 0 && a === 255);
+};
+
+const matchStartColor = (pixelPos, startR, startG, startB) => {
+  var r = outlineLayerData.data[pixelPos],
+      g = outlineLayerData.data[pixelPos + 1],
+      b = outlineLayerData.data[pixelPos + 2],
+      a = outlineLayerData.data[pixelPos + 3];
+  
+  if(matchOutlineColor(r,g,b,a)){
+    return false;
+  }
+  
+  r = colorLayerData.data[pixelPos];
+  g = colorLayerData.data[pixelPos + 1];
+  b = colorLayerData.data[pixelPos + 2];
+  
+  if(r === startR && g=== startG && b === startB){
+    return true;
+  }
+  
+  if(r === colorToObject(fillStyle).r && g === colorToObject(fillStyle).g && b === colorToObject(fillStyle).b){
+    return false;
+  }
+  return true;
+};
+
+const colorPixel = (pixelPos,r,g,b,a) =>{
+  colorLayerData.data[pixelPos] = r;
+  colorLayerData.data[pixelPos + 1] = g;
+  colorLayerData.data[pixelPos + 2] = b;
+  colorLayerData.data[pixelPos + 3] = a !== undefined ? a:255;
+};
+
+const floodFill = (startX, startY, startR, startG, startB) => {
+  var newPos, x,y,pixelPos,reachLeft,reachRight;
+  var pixelStack = [[startX, startY]];
+  var currentColor = colorToObject(fillStyle);
+  
+  while(pixelStack.length) {
+    newPos = pixelStack.pop();
+    x = newPos[0];
+    y = newPos[1];
+    
+    pixelPos = ((y * canvas.width) + x) * 4;
+    
+    while(y >= 0 && matchStartColor(pixelPos, startR, startG, startB)){
+      y-=1;
+      pixelPos -= canvas.width * 4;
+    }
+    
+    pixelPos += canvas.width * 4;
+    y += 1;
+    reachLeft = false;
+    reachRight = false;
+    
+    while(y <= (canvas.height-1) && matchStartColor(pixelPos, startR, startG, startB)){
+      y += 1;
+      
+      colorPixel(pixelPos, currentColor.r, currentColor.g, currentColor.b);
+      
+      if(x > 0){
+        if(matchStartColor(pixelPos - 4, startR, startG, startB)){
+          if(!reachLeft) {
+            pixelStack.push([x-1,y]);
+            reachLeft = true;
+          }
+        } else if(reachLeft){
+            reachLeft = false;
+        } 
       }
+      
+      if(x < (canvas.width-1)){
+        if(matchStartColor(pixelPos + 4, startR, startG, startB)){
+          if(!reachRight) {
+            pixelStack.push([x+1,y]);
+            reachRight = true;
+          }
+        } else if(reachRight){
+            reachRight = false;
+        } 
+      }
+      
+      pixelPos += canvas.width * 4;
     }
   }
-  return shapes;
-}
+};
 
-const smallestArea = (shapes) => {
-  var smallest = shapes[0];
-  for(var i = 1; i < shapes.length; i++){
-    if(shapes[i].shape === "rect"){
-      if(smallest.shape === "rect"){
-        if((smallest.w * smallest.h) > (shapes[i].w * shapes[i].h)){
-          smallest = shapes[i];
-        }
-      } else if(smallest.shape == "circle"){
-        if((Math.PI * Math.pow(smallest.rad,2)) > (shapes[i].w * shapes[i].h)){
-          smallest = shapes[i];
-        }
-      }
-    } else if(shapes[i].shape === "circle"){
-      if(smallest.shape === "circle"){
-        if((Math.PI * Math.pow(smallest.rad,2)) > (Math.PI * Math.pow(shapes[i].rad,2))){
-          smallest = shapes[i];
-        }
-      } else if(smallest.shape === "rect"){
-        if((smallest.w * smallest.h) > (Math.PI * Math.pow(shapes[i].rad,2))){
-          smallest = shapes[i];
-        }
-      }      
-    }
+const paintAt = (startX, startY) => {
+  var pixelPos = (startY * canvas.width + startX) * 4;
+  var r = colorLayerData.data[pixelPos],
+      g = colorLayerData.data[pixelPos + 1],
+      b = colorLayerData.data[pixelPos + 2],
+      a = colorLayerData.data[pixelPos + 3];  
+  
+  var currentColor = colorToObject(fillStyle);
+  if(r === currentColor.r && g === currentColor.g && b === currentColor.b){
+    return;
   }
-  return smallest;
-}
+  
+  if(matchOutlineColor(r,g,b,a)){
+    return;
+  }
+  
+  floodFill(startX, startY, r, g, b);
+  
+  draw(false);
+};
 
 const setColorEvents = () => {
-  document.querySelector('#Blue').style.backgroundColor = "Blue";
-  document.querySelector('#Blue').onclick = function(e){fillStyle = e.target.id;};
-  document.querySelector('#Red').style.backgroundColor = "Red";
-  document.querySelector('#Red').onclick = function(e){fillStyle = e.target.id;};
-  document.querySelector('#Orange').style.backgroundColor = "Orange";
-  document.querySelector('#Orange').onclick = function(e){fillStyle = e.target.id;};
-  document.querySelector('#Yellow').style.backgroundColor = "Yellow";
-  document.querySelector('#Yellow').onclick = function(e){fillStyle = e.target.id;};
-  document.querySelector('#Green').style.backgroundColor = "Green";
-  document.querySelector('#Green').onclick = function(e){fillStyle = e.target.id;};
-  document.querySelector('#BlueViolet').style.backgroundColor = "BlueViolet";
-  document.querySelector('#BlueViolet').onclick = function(e){fillStyle = e.target.id;};
-  document.querySelector('#HotPink').style.backgroundColor = "HotPink";
-  document.querySelector('#HotPink').onclick = function(e){fillStyle = e.target.id;};
-  document.querySelector('#Black').style.backgroundColor = "Black";
-  document.querySelector('#Black').onclick = function(e){fillStyle = e.target.id;};
-  document.querySelector('#White').style.backgroundColor = "White";
-  document.querySelector('#White').onclick = function(e){fillStyle = e.target.id;};
+  var colorElements = document.querySelector("#colors").children;
+  var keys = Object.keys(colors);
+  
+  for(var i = 0; i < keys.length; i++){
+    const color = colors[keys[i]];
+    const element = colorElements[i];
+    const colorString = colorToString(color.r,color.g,color.b);
+    element.style.backgroundColor = colorString;
+    element.onclick = function(){
+      document.querySelector(".activeColor").classList.remove("activeColor");
+      fillStyle = colorString;
+      element.classList.add("activeColor");
+    };
+  }
+  colorElements[0].classList.add("activeColor");
 }
 
 // FUNCTIONS
@@ -132,6 +223,8 @@ function init(){
   
     // Hook up event listeners
     topCavas.onmousedown = doMousedown;
+    
+    colorLayerData = ctx.getImageData(0,0,canvas.width,canvas.height);
   
     var drawsArray = document.getElementById("calls").children;
     if(drawsArray.length > 0){
@@ -152,20 +245,21 @@ function init(){
         }
       }
     }
-    draw();
+    draw(false);
   
     if(Object.keys(draws).length === 0){
       $("#fillAlert").css("display","block");
       $("#fillAlert").css("z-index","1");
       $("#fillAlert").css("position","relative");   
     }
-    
 
     setColorEvents();
-
-    document.querySelector("#clearButton").onclick = function(){
-      doClear();
-    };
+    
+    outlineLayerData = ctx.getImageData(0,0,canvas.width,canvas.height);  
+  
+//    document.querySelector("#clearButton").onclick = function(){
+//      doClear();
+//    };
     document.querySelector("#exportButton").onclick = doExport;
 //    document.querySelector("#undoButton").onclick = function(){
 //      var keys = Object.keys(draws);
@@ -179,33 +273,40 @@ function init(){
 
 // EVENT CALLBACK FUNCTIONS
 function doMousedown(e){
-    var shapes = inShape(getMouse(e));
-    if(shapes.length == 0){
-      canvas.style.background = fillStyle;
-    }else if(shapes.length == 1){
-      shapes[0].fill = fillStyle;
-    }else if(shapes.length > 1){
-      var shape = smallestArea(shapes);
-      console.log(shape);
-      shape.fill = fillStyle;
-    }	
-    draw();
+  var mouse = getMouse(e);
+  paintAt(mouse.x, mouse.y);
 }
 
 function clearTopCanvas () {
     topCtx.clearRect(0,0,topCtx.canvas.width,topCtx.canvas.height);
 }
 
+function getPixelPos(x,y){
+ return ((y * canvas.width) + x) * 4; 
+}
+
 function doClear(){
-  var keys = Object.keys(draws);
-  
-  for(var i = 0; i < keys.length; i++){
-    const drawCall = draws[keys[i]];
-    drawCall.fill = "white";
-  }
-  
-  canvas.style.background = "white";
-  draw();
+//  var pixelPos = getPixelPos(0,0);
+//  var r = outlineLayerData.data[pixelPos],
+//      g = outlineLayerData.data[pixelPos + 1],
+//      b = outlineLayerData.data[pixelPos + 2];
+//  
+//  var saveFill = fillStyle;
+//  fillStyle = colorToString(white.r, white.g, white.b);
+//  
+//  for(var x = 0; x < canvas.width; x++){
+//    for(var y = 0; y < canvas.height; y++){
+//      r = outlineLayerData.data[getPixelPos(x,y)];
+//      g = outlineLayerData.data[getPixelPos(x,y) + 1];
+//      b = outlineLayerData.data[getPixelPos(x,y) + 2];
+//      
+//      if(r != 255 || g != 255 || b != 255){
+//        paintAt(x,y);
+//      }
+//    }
+//  }
+//  
+//  fillStyle = saveFill;
 }
 
 function doExport(){
@@ -218,18 +319,7 @@ function doExport(){
     myWindow.resizeTo(canvas.width,canvas.height); // needed so Chrome would display image
  }
 
-
-// UTILITY FUNCTIONS
-/*
-These utility functions do not depend on any global variables being in existence, 
-and produce no "side effects" such as changing ctx state variables.
-They are "pure functions" - see: http://en.wikipedia.org/wiki/Pure_function
-*/
-
-// Function Name: getMouse()
-// returns mouse position in local coordinate system of element
 // Author: Tony Jefferson
-// Last update: 3/1/2014
 function getMouse(e){
     var mouse = {}
     mouse.x = e.pageX - e.target.offsetLeft;

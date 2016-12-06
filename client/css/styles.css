@@ -44,6 +44,10 @@ label{
   height: 30px;
 }
 
+.activeColor{
+  border: solid 5px black;
+}
+
 #fillLabel{
   position: absolute;
   top: 90px;
@@ -58,14 +62,28 @@ label{
 
 #toolChooser{
   position: absolute;
-  top: 380px;
+  top: 110px;
+  left: 740px;
+  width: 125px;
+}
+
+#toolLabel{
+  position: absolute;
+  top: 90px;
   left: 740px;
   width: 125px;
 }
 
 #lineWidthChooser{
   position: absolute;
-  top: 425px;
+  top: 175px;
+  left: 740px;
+  width: 125px;
+}
+
+#lineLabel{
+  position: absolute;
+  top: 155px;
   left: 740px;
   width: 125px;
 }

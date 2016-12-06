@@ -8,7 +8,7 @@ var rectX,rectY,rectW,rectH,circX,circY,circRad;
 
 // CONSTANTS
 var DEFAULT_LINE_WIDTH = 3;
-var DEFAULT_STROKE_STYLE = "red";
+var DEFAULT_STROKE_STYLE = "Black";
 var TOOL_RECTANGLE = "toolRectangle";
 var TOOL_CIRCLE = "toolCircle";
 
@@ -23,16 +23,13 @@ const draw = () => {
     const drawCall = draws[i];
     topCtx.strokeStyle = drawCall.stroke;
     topCtx.lineWidth = drawCall.line;
-    topCtx.fillStyle = "white";
     
     if(drawCall.shape === 'rect'){
       topCtx.strokeRect(drawCall.x,drawCall.y,drawCall.w,drawCall.h); 
-      topCtx.fillRect(drawCall.x, drawCall.y,drawCall.w,drawCall.h);
     } else if(drawCall.shape === 'circle'){
       topCtx.beginPath();
       topCtx.arc(drawCall.x,drawCall.y,drawCall.rad,0,Math.PI * 2,false);
       topCtx.closePath();
-      topCtx.fill();
       topCtx.stroke();
     }
 
@@ -40,28 +37,7 @@ const draw = () => {
     clearTopCanvas();    
   }
   console.log(draws);
-}
-
-const setColorEvents = () => {
-  document.querySelector('#Blue').style.backgroundColor = "Blue";
-  document.querySelector('#Blue').onclick = function(e){strokeStyle = e.target.id;};
-  document.querySelector('#Red').style.backgroundColor = "Red";
-  document.querySelector('#Red').onclick = function(e){strokeStyle = e.target.id;};
-  document.querySelector('#Orange').style.backgroundColor = "Orange";
-  document.querySelector('#Orange').onclick = function(e){strokeStyle = e.target.id;};
-  document.querySelector('#Yellow').style.backgroundColor = "Yellow";
-  document.querySelector('#Yellow').onclick = function(e){strokeStyle = e.target.id;};
-  document.querySelector('#Green').style.backgroundColor = "Green";
-  document.querySelector('#Green').onclick = function(e){strokeStyle = e.target.id;};
-  document.querySelector('#BlueViolet').style.backgroundColor = "BlueViolet";
-  document.querySelector('#BlueViolet').onclick = function(e){strokeStyle = e.target.id;};
-  document.querySelector('#HotPink').style.backgroundColor = "HotPink";
-  document.querySelector('#HotPink').onclick = function(e){strokeStyle = e.target.id;};
-  document.querySelector('#Black').style.backgroundColor = "Black";
-  document.querySelector('#Black').onclick = function(e){strokeStyle = e.target.id;};
-  document.querySelector('#White').style.backgroundColor = "White";
-  document.querySelector('#White').onclick = function(e){strokeStyle = e.target.id;};
-}
+};
 
 // FUNCTIONS
 function init(){
@@ -96,7 +72,7 @@ function init(){
         lineWidth = e.target.value;
     }
     
-    setColorEvents();
+//    setColorEvents();
 
     document.querySelector('#toolChooser').onchange = function(e){
         currentTool = e.target.value;

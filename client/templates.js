@@ -5,16 +5,13 @@ const draw = (draws, ctx) => {
     const drawCall = draws[i];
     ctx.strokeStyle = drawCall.stroke;
     ctx.lineWidth = drawCall.line;
-    ctx.fillStyle = "white";
     
     if(drawCall.shape === 'rect'){
       ctx.strokeRect(drawCall.x,drawCall.y,drawCall.w,drawCall.h); 
-      ctx.fillRect(drawCall.x, drawCall.y,drawCall.w,drawCall.h);
     } else if(drawCall.shape === 'circle'){
       ctx.beginPath();
       ctx.arc(drawCall.x,drawCall.y,drawCall.rad,0,Math.PI * 2,false);
       ctx.closePath();
-      ctx.fill();
       ctx.stroke();
     }
 
