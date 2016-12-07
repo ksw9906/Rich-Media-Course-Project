@@ -72,11 +72,25 @@ function init(){
     topCavas.onmouseup = doMouseup;
     topCavas.onmouseout = doMouseout;
 
-    document.querySelector('#lineWidthChooser').onchange = doLineWidthChange;
-
-    function doLineWidthChange (e) {
-        lineWidth = e.target.value;
+    document.getElementById("plus").onclick = () => {
+      if(lineWidth < 10){
+        lineWidth++;
+        document.getElementById("lineWidth").innerHTML = lineWidth;
+      }
     }
+    
+    document.getElementById("minus").onclick = () => {
+      if(lineWidth > 0){
+        lineWidth--;
+        document.getElementById("lineWidth").innerHTML = lineWidth;
+      }
+    }
+
+//    document.querySelector('#lineWidthChooser').onchange = doLineWidthChange;
+//
+//    function doLineWidthChange (e) {
+//        lineWidth = e.target.value;
+//    }
 
     document.querySelector('#toolChooser').onchange = function(e){
         currentTool = e.target.value;

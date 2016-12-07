@@ -58,20 +58,6 @@
     {{/if}}
   </div>
   
-<!--
-  <p id="fillLabel">Fill Color:</p>
-  <div id="colors" class="btn-group-vertical">
-    <a id="Red" href="#" class="btn btn-default fillColor"></a>
-    <a id="Orange" href="#" class="btn btn-default fillColor"></a>
-    <a id="Yellow" href="#" class="btn btn-default fillColor"></a>
-    <a id="Green" href="#" class="btn btn-default fillColor"></a>
-    <a id="Blue" href="#" class="btn btn-default fillColor"></a>
-    <a id="BlueViolet" href="#" class="btn btn-default fillColor"></a>
-    <a id="HotPink" href="#" class="btn btn-default fillColor"></a>
-    <a id="White" href="#" class="btn btn-default fillColor"></a>
-  </div>
--->
-  
   <div id="colorPicker">
     <p id="fillLabel">Fill Color:</p>
     <div id="colorSwatch"></div>
@@ -84,6 +70,10 @@
       <input class="slider" type="range" id="gSlide" value="0" max="255" min="0">
       <input class="slider" type="range" id="bSlide" value="0" max="255" min="0">
     </div>
+    
+    <p id="presetLabel">Preset Colors:</p>
+    <table id="presets">
+    </table>
   </div>
   
   <div id="fillControls" class="btn-group-vertical">

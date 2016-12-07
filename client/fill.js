@@ -6,19 +6,12 @@ var canvas,ctx,dragging=false,lineWidth,strokeStyle;
 var currentTool, fillStyle, origin, topCavas, topCtx;
 var rectX,rectY,rectW,rectH,circX,circY,circRad;
 
-//Fill code: https://github.com/williammalone/HTML5-Paint-Bucket-Tool/blob/master/html5-canvas-paint-bucket.js
-var colors =
-    {
-      red:{r:255, g:0, b:0},
-      orange:{r:255, g:191, b:0},
-      yellow:{r:255, g:255, b:0},
-      green:{r:0, g:153, b:38},
-      blue:{r:0, g:0, b:255},
-      purple:{r:191, g:0, b:255},
-      pink:{r:255, g:102, b:179},
-      white:{r:255, g:255, b:255}
-    }
+var rSlide, gSlide, bSlide;
 
+//Fill code: https://github.com/williammalone/HTML5-Paint-Bucket-Tool/blob/master/html5-canvas-paint-bucket.js
+var colors = [
+  {r:253,g:225,b:226},{r:255,g:235,b:221},{r:255,g:253,b:213},{r:201,g:245,b:215},{r:193,g:224,b:255},{r:255,g:206,b:255},{r:255,g:255,b:255},{r:245,g:122,b:129},{r:255,g:179,b:128},{r:255,g:249,b:125},{r:119,g:230,b:155},{r:108,g:182,b:255},{r:255,g:113,b:255},{r:211,g:211,b:211},{r:255,g:0,b:0},{r:255,g:127,b:39},{r:255,g:242,b:0},{r:34,g:177,b:76},{r:0,g:128,b:255},{r:236,g:0,b:236},{r:151,g:151,b:151},{r:175,g:14,b:22},{r:185,g:74,b:0},{r:153,g:146,b:0},{r:21,g:111,b:48},{r:0,g:85,b:9170},{r:174,g:0,b:174}, {r:90,g:90,b:90},{r:95,g:7,b:12},{r:121,g:49,b:0},{r:96,g:91,b:0},{r:11,g:60,b:26},{r:0,g:9,b:98},{r:81,g:0,b:81},{r:0,g:0,b:0}
+];
 
 var colorToString = (r,g,b) =>{
   return "rgb("+ r + "," + g + "," + b +")";
@@ -35,7 +28,7 @@ var colorToObject = (color) => {
 var colorLayerData, outlineLayerData, clearLayerData;
 
 // CONSTANTS
-var DEFAULT_FILL_STYLE = colorToString(colors.red.r, colors.red.g, colors.red.b);
+var DEFAULT_FILL_STYLE = colorToString(255,0,0);
 
 //Default draws
 var draws = {};
@@ -187,28 +180,42 @@ const paintAt = (startX, startY) => {
 };
 
 const setColorEvents = () => {
-  var colorElements = document.querySelector("#colors").children;
-  var keys = Object.keys(colors);
+  var colorTable = document.querySelector("#presets");
+  var index = 0;
   
-  for(var i = 0; i < keys.length; i++){
-    const color = colors[keys[i]];
-    const element = colorElements[i];
-    const colorString = colorToString(color.r,color.g,color.b);
-    element.style.backgroundColor = colorString;
-    element.onclick = function(){
-      document.querySelector(".activeColor").classList.remove("activeColor");
-      fillStyle = colorString;
-      element.classList.add("activeColor");
-    };
+  for(var x = 0; x < 5; x++){
+    const tr = document.createElement("tr");
+    for(var y = 0; y < 7;y++){
+      const color = colors[index];
+      const element = document.createElement("td");
+      
+      element.height = 20;
+      element.width = 20;      
+      element.style.backgroundColor = colorToString(color.r, color.g, color.b);
+      element.onclick = () => {
+        if(document.querySelector(".activeColor"))
+          document.querySelector(".activeColor").classList.remove("activeColor");
+        rSlide.value = color.r;
+        gSlide.value = color.g;
+        bSlide.value = color.b;
+        setColorSwatch();
+        setFillStyle();
+        element.classList.add("activeColor");
+      };
+      tr.append(element);
+      index++;
+    }
+    colorTable.append(tr);
   }
-  colorElements[0].classList.add("activeColor");
+  
+  colorTable.children[0].children[0].classList.add("activeColor");
 }
 
-const setColorSwatch = (rSlide, gSlide, bSlide) => {
+const setColorSwatch = () => {
   document.querySelector("#colorSwatch").style.backgroundColor = colorToString(rSlide.value, gSlide.value, bSlide.value);
 };
 
-const setFillStyle = (rSlide, gSlide, bSlide) => {
+const setFillStyle = () => {
   fillStyle = colorToString(rSlide.value, gSlide.value, bSlide.value);
 };
 
@@ -258,8 +265,6 @@ function init(){
       $("#fillAlert").css("z-index","1");
       $("#fillAlert").css("position","relative");   
     }
-
-//    setColorEvents();
     
     outlineLayerData = ctx.getImageData(0,0,canvas.width,canvas.height);  
   
@@ -268,9 +273,9 @@ function init(){
     };
     document.querySelector("#savebutton").onclick = doSave;
   
-    var rSlide = document.querySelector("#rSlide");
-    var gSlide = document.querySelector("#gSlide");
-    var bSlide = document.querySelector("#bSlide");
+    rSlide = document.querySelector("#rSlide");
+    gSlide = document.querySelector("#gSlide");
+    bSlide = document.querySelector("#bSlide");
   
     setColorSwatch(rSlide,gSlide,bSlide);
   
@@ -279,19 +284,27 @@ function init(){
         rSlide.value;
       setFillStyle(rSlide,gSlide,bSlide);
       setColorSwatch(rSlide,gSlide,bSlide);
+      if(document.querySelector(".activeColor"))
+        document.querySelector(".activeColor").classList.remove("activeColor");
     }
     gSlide.oninput = () =>{
       document.querySelector("#gLabel").innerHTML = "G: " +
         gSlide.value;
       setFillStyle(rSlide,gSlide,bSlide);
       setColorSwatch(rSlide,gSlide,bSlide);
+      if(document.querySelector(".activeColor"))
+        document.querySelector(".activeColor").classList.remove("activeColor");
     }
     bSlide.oninput = () =>{
       document.querySelector("#bLabel").innerHTML = "B: " +
         bSlide.value;
       setFillStyle(rSlide,gSlide,bSlide);
       setColorSwatch(rSlide,gSlide,bSlide);
+      if(document.querySelector(".activeColor"))
+        document.querySelector(".activeColor").classList.remove("activeColor");
     }    
+    
+    setColorEvents();
 }
 
 
