@@ -32,7 +32,7 @@ var colorToObject = (color) => {
   return {r:r,g:g,b:b};
 }
 
-var colorLayerData, outlineLayerData;
+var colorLayerData, outlineLayerData, clearLayerData;
 
 // CONSTANTS
 var DEFAULT_FILL_STYLE = colorToString(colors.red.r, colors.red.g, colors.red.b);
@@ -41,7 +41,7 @@ var DEFAULT_FILL_STYLE = colorToString(colors.red.r, colors.red.g, colors.red.b)
 var draws = {};
 
 // FUNCTIONS
-const draw = (clearing) => {
+const draw = () => {
   topCtx.globalAlpha = 1;
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   
@@ -56,23 +56,18 @@ const draw = (clearing) => {
     topCtx.strokeStyle = drawCall.stroke;
     topCtx.lineWidth = drawCall.line;
     
-    if(drawCall.fill != "none"){
-      topCtx.fillStyle = drawCall.fill;
-      if(clearing){
-        topCtx.fillRect(drawCall.x,drawCall.y,drawCall.w,drawCall.h);
-      }
-    }
-    
+
     if(drawCall.shape === 'rect'){
       topCtx.strokeRect(drawCall.x,drawCall.y,drawCall.w,drawCall.h);      
     } else if(drawCall.shape === 'circle'){
       topCtx.beginPath();
       topCtx.arc(drawCall.x,drawCall.y,drawCall.rad,0,Math.PI * 2,false);
       topCtx.closePath();
-      if(clearing){
-        topCtx.fill();        
-      }
-
+      topCtx.stroke();
+    } else if(drawCall.shape === 'line'){
+      topCtx.beginPath();
+      topCtx.moveTo(drawCall.x, drawCall.y);
+      topCtx.lineTo(drawCall.x2, drawCall.y2);
       topCtx.stroke();
     }
     
@@ -188,7 +183,7 @@ const paintAt = (startX, startY) => {
   
   floodFill(startX, startY, r, g, b);
   
-  draw(false);
+  draw();
 };
 
 const setColorEvents = () => {
@@ -209,6 +204,14 @@ const setColorEvents = () => {
   colorElements[0].classList.add("activeColor");
 }
 
+const setColorSwatch = (rSlide, gSlide, bSlide) => {
+  document.querySelector("#colorSwatch").style.backgroundColor = colorToString(rSlide.value, gSlide.value, bSlide.value);
+};
+
+const setFillStyle = (rSlide, gSlide, bSlide) => {
+  fillStyle = colorToString(rSlide.value, gSlide.value, bSlide.value);
+};
+
 // FUNCTIONS
 function init(){
     // initialize some globals
@@ -225,6 +228,7 @@ function init(){
     topCavas.onmousedown = doMousedown;
     
     colorLayerData = ctx.getImageData(0,0,canvas.width,canvas.height);
+    clearLayerData = ctx.getImageData(0,0,canvas.width,canvas.height);
   
     var drawsArray = document.getElementById("calls").children;
     if(drawsArray.length > 0){
@@ -233,19 +237,21 @@ function init(){
         draws[i] = {};
         draws[i]["shape"] = drawsArray[i].children[0].innerHTML;
         draws[i]["x"] = parseInt(drawsArray[i].children[1].innerHTML);
-        draws[i]["y"] = parseInt(drawsArray[i].children[2].innerHTML);
-        draws[i]["stroke"] = drawsArray[i].children[6].innerHTML;
-        draws[i]["line"] = parseInt(drawsArray[i].children[7].innerHTML);
+        draws[i]["y"] = parseInt(drawsArray[i].children[2].innerHTML);    
+        draws[i]["line"] = parseInt(drawsArray[i].children[8].innerHTML);
         draws[i]["fill"] = "white";
         if(draws[i]["shape"] === "rect"){
           draws[i]["w"] = parseInt(drawsArray[i].children[3].innerHTML);
           draws[i]["h"] = parseInt(drawsArray[i].children[4].innerHTML);        
-        } else{
+        } else if(draws[i]["shape"] === "circle"){
           draws[i]["rad"] = parseInt(drawsArray[i].children[5].innerHTML);
+        } else{
+          draws[i]["x2"] = drawsArray[i].children[6].innerHTML;
+          draws[i]["y2"] = drawsArray[i].children[7].innerHTML;    
         }
       }
     }
-    draw(false);
+    draw();
   
     if(Object.keys(draws).length === 0){
       $("#fillAlert").css("display","block");
@@ -253,21 +259,39 @@ function init(){
       $("#fillAlert").css("position","relative");   
     }
 
-    setColorEvents();
+//    setColorEvents();
     
     outlineLayerData = ctx.getImageData(0,0,canvas.width,canvas.height);  
   
-//    document.querySelector("#clearButton").onclick = function(){
-//      doClear();
-//    };
-    document.querySelector("#exportButton").onclick = doExport;
-//    document.querySelector("#undoButton").onclick = function(){
-//      var keys = Object.keys(draws);
-//      if(keys.length > 0){
-//        delete draws[keys[keys.length-1]];
-//        draw();
-//      }
-//    }
+    document.querySelector("#clearButton").onclick = function(){
+      doClear();
+    };
+    document.querySelector("#savebutton").onclick = doSave;
+  
+    var rSlide = document.querySelector("#rSlide");
+    var gSlide = document.querySelector("#gSlide");
+    var bSlide = document.querySelector("#bSlide");
+  
+    setColorSwatch(rSlide,gSlide,bSlide);
+  
+    rSlide.oninput = () =>{
+      document.querySelector("#rLabel").innerHTML = "R: " +
+        rSlide.value;
+      setFillStyle(rSlide,gSlide,bSlide);
+      setColorSwatch(rSlide,gSlide,bSlide);
+    }
+    gSlide.oninput = () =>{
+      document.querySelector("#gLabel").innerHTML = "G: " +
+        gSlide.value;
+      setFillStyle(rSlide,gSlide,bSlide);
+      setColorSwatch(rSlide,gSlide,bSlide);
+    }
+    bSlide.oninput = () =>{
+      document.querySelector("#bLabel").innerHTML = "B: " +
+        bSlide.value;
+      setFillStyle(rSlide,gSlide,bSlide);
+      setColorSwatch(rSlide,gSlide,bSlide);
+    }    
 }
 
 
@@ -286,37 +310,44 @@ function getPixelPos(x,y){
 }
 
 function doClear(){
-//  var pixelPos = getPixelPos(0,0);
-//  var r = outlineLayerData.data[pixelPos],
-//      g = outlineLayerData.data[pixelPos + 1],
-//      b = outlineLayerData.data[pixelPos + 2];
-//  
-//  var saveFill = fillStyle;
-//  fillStyle = colorToString(white.r, white.g, white.b);
-//  
-//  for(var x = 0; x < canvas.width; x++){
-//    for(var y = 0; y < canvas.height; y++){
-//      r = outlineLayerData.data[getPixelPos(x,y)];
-//      g = outlineLayerData.data[getPixelPos(x,y) + 1];
-//      b = outlineLayerData.data[getPixelPos(x,y) + 2];
-//      
-//      if(r != 255 || g != 255 || b != 255){
-//        paintAt(x,y);
-//      }
-//    }
-//  }
-//  
-//  fillStyle = saveFill;
+  colorLayerData.data.set(clearLayerData.data);
+  draw();
 }
 
-function doExport(){
-    // open a new window and load the image in it
-    // http://www.w3schools.com/jsref/met_win_open.asp
-    var data = canvas.toDataURL(); 
-    var windowName = "canvasImage";
-    var windowOptions = "left=0,top=0,width=" + canvas.width + ",height=" + canvas.height +",toolbar=0,resizable=0";
-    var myWindow = window.open(data,windowName,windowOptions);
-    myWindow.resizeTo(canvas.width,canvas.height); // needed so Chrome would display image
+function doSave(){
+  var modal = document.getElementById('saveModal');
+  modal.style.display = "block";
+  
+  document.getElementById('cancelButton').onclick = () => {
+    modal.style.display = "none";
+  };
+  
+  document.getElementById('formSaveButton').onclick = (e) => {
+    e.preventDefault();
+    
+    var imgData = canvas.toDataURL()
+    
+    var data = {
+      dataString: imgData,
+      _csrf: document.getElementById("csrf").value
+    };
+        
+    $.ajax({
+      cache: false,
+      type: "POST",
+      url: "/savePic",
+      data: data,
+      dataType: "json",
+      success: (result, status, xhr) => {
+        window.location = "/gallery";
+      },
+      error: (xhr, status, error) => {
+        window.location = "/gallery";
+      }
+    });
+    
+    return false;
+  };
  }
 
 // Author: Tony Jefferson

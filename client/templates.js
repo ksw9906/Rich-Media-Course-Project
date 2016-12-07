@@ -13,6 +13,11 @@ const draw = (draws, ctx) => {
       ctx.arc(drawCall.x,drawCall.y,drawCall.rad,0,Math.PI * 2,false);
       ctx.closePath();
       ctx.stroke();
+    } else if(drawCall.shape === 'line'){
+      ctx.beginPath();
+      ctx.moveTo(drawCall.x, drawCall.y);
+      ctx.lineTo(drawCall.x2, drawCall.y2);
+      ctx.stroke();
     }
 
     ctx.drawImage(hiddenCanvas,0,0);  
@@ -31,13 +36,15 @@ const init = () =>{
       templates[i].calls[j]["shape"] = drawsArray[i].children[j].children[0].innerHTML;
       templates[i].calls[j]["x"] = drawsArray[i].children[j].children[1].innerHTML;
       templates[i].calls[j]["y"] = drawsArray[i].children[j].children[2].innerHTML;
-      templates[i].calls[j]["stroke"] = drawsArray[i].children[j].children[6].innerHTML;
-      templates[i].calls[j]["line"] = drawsArray[i].children[j].children[7].innerHTML;
+      templates[i].calls[j]["line"] = drawsArray[i].children[j].children[8].innerHTML;
       if(drawsArray[i].children[j].children[0].innerHTML === "rect"){
         templates[i].calls[j]["w"] = drawsArray[i].children[j].children[3].innerHTML;
         templates[i].calls[j]["h"] = drawsArray[i].children[j].children[4].innerHTML;
-      } else{
+      } else if(drawsArray[i].children[j].children[0].innerHTML === "circle"){
         templates[i].calls[j]["rad"] = drawsArray[i].children[j].children[5].innerHTML;
+      } else if (drawsArray[i].children[j].children[0].innerHTML === "line"){
+        templates[i].calls[j]["x2"] = drawsArray[i].children[j].children[6].innerHTML;
+        templates[i].calls[j]["y2"] = drawsArray[i].children[j].children[7].innerHTML;
       }
     }
   }
@@ -80,19 +87,31 @@ const init = () =>{
         var id = target[0].parentElement.id;
         var url = "/remove/" + id;
         var token = document.getElementById("templates").children[0].id;
-        $.ajax({
-            cache: false,
-            type: "POST",
-            url: url,
-            data: {_csrf: token},
-            dataType: "json",
-            success: (result, status, xhr) => {
-              window.location = result.redirect;
-            },
-            error: (xhr, status, error) => {
-              console.log(error);
-            }
-        }); 
+        
+        var modal = document.getElementById('deleteModal');
+        modal.style.display = "block";
+
+        document.getElementById('cancelButton').onclick = () => {
+          modal.style.display = "none";
+        };
+
+        document.getElementById('formDeleteButton').onclick = (e) => {
+          e.preventDefault();
+
+          $.ajax({
+              cache: false,
+              type: "POST",
+              url: url,
+              data: {_csrf: token},
+              dataType: "json",
+              success: (result, status, xhr) => {
+                window.location = result.redirect;
+              },
+              error: (xhr, status, error) => {
+                console.log(error);
+              }
+          });
+        };
       };
       
       div.appendChild(canvas);
@@ -102,6 +121,7 @@ const init = () =>{
 
       draw(templates[keys[i]].calls, ctx);
       var imgData = hiddenCanvas.toDataURL();
+      console.log(imgData.length);
       var thumbnail = new Image();
       thumbnail.src = imgData;
       thumbnailCtx.drawImage(thumbnail,0,0,width,height);

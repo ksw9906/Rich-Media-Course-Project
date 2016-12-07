@@ -14,9 +14,9 @@
 
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
         <ul class="nav navbar-nav">
-          <li><a href="/templates">Fill</a></li>
-          <li class="active"><a href="/outline">Outline</a></li>
+          <li class="active"><a href="/outline">Create</a></li>
           <li><a href="/templates">Templates</a></li>
+          <li><a href="/gallery">Gallery</a></li>
           <li><a href="/logout">Logout</a></li>
         </ul>
       </div>
@@ -31,13 +31,14 @@
       Get a real browser!
   </canvas>
 
-  <label for="toolChooser" id="toolLabel">Shape:</label>
+  <p id="toolLabel">Shape:</p>
   <select id="toolChooser" class="form-control">
     <option value="toolRectangle">Rectangle</option>
     <option value="toolCircle">Circle</option>
+    <option value="toolLine">Line</option>
   </select>
   
-  <label for="lineWidthChooser" id="lineLabel">Line Width:</label>
+  <p id="lineLabel">Line Width:</p>
   <select id="lineWidthChooser" class="form-control">
       <option value="1">1</option>
       <option value="2">2</option>

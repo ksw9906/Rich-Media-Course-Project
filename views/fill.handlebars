@@ -14,9 +14,9 @@
 
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
         <ul class="nav navbar-nav">
-          <li class="active"><a href="/templates">Fill<span class="sr-only">(current)</span></a></li>
-          <li><a href="/outline">Outline</a></li>
+          <li><a href="/outline">Create</a></li>
           <li><a href="/templates">Templates</a></li>
+          <li><a href="/gallery">Gallery</a></li>
           <li><a href="/logout">Logout</a></li>          
         </ul>
       </div>
@@ -48,7 +48,8 @@
             <li>{{this.w}}</li>
             <li>{{this.h}}</li>
             <li>{{this.rad}}</li>
-            <li>{{this.stroke}}</li>
+            <li>{{this.x2}}</li>
+            <li>{{this.y2}}</li>
             <li>{{this.line}}</li>
           </ul>
         {{/each}}
@@ -57,6 +58,7 @@
     {{/if}}
   </div>
   
+<!--
   <p id="fillLabel">Fill Color:</p>
   <div id="colors" class="btn-group-vertical">
     <a id="Red" href="#" class="btn btn-default fillColor"></a>
@@ -68,12 +70,40 @@
     <a id="HotPink" href="#" class="btn btn-default fillColor"></a>
     <a id="White" href="#" class="btn btn-default fillColor"></a>
   </div>
+-->
   
-  <div id="controls" class="btn-group-vertical">
-    <a href="#" class="btn btn-default" id="clearButton">Clear</a>
-    <a href="#" class="btn btn-default" id="exportButton">Export</a>
-<!--    <a href="#" class="btn btn-default" id="undoButton">Undo</a>-->
+  <div id="colorPicker">
+    <p id="fillLabel">Fill Color:</p>
+    <div id="colorSwatch"></div>
+    <p id="rLabel">R: 255</p>
+    <p id="gLabel">G: 0</p>
+    <p id="bLabel">B: 0</p>
+    
+    <div id="sliders">
+      <input class="slider" type="range" id="rSlide" value="255" max="255" min="0">
+      <input class="slider" type="range" id="gSlide" value="0" max="255" min="0">
+      <input class="slider" type="range" id="bSlide" value="0" max="255" min="0">
+    </div>
   </div>
+  
+  <div id="fillControls" class="btn-group-vertical">
+    <a href="#" class="btn btn-default" id="clearButton">Clear</a>
+    <a href="#" class="btn btn-default" id="saveButton">Save</a>
+  </div>
+  
+  <div id="saveModal" class="modal">
+    <div class="modalContent">
+      <form id="saveForm">
+        <fieldset>
+          <legend>Save Image</legend>
+          <input type="hidden" name="_csrf" id="csrf" value="{{csrfToken}}" />
+          <button type="button" id="formSaveButton" class="btn btn-primary modalButton">Save</button>
+          <button type="button" id="cancelButton" class="btn btn-default modalButton">Cancel</button>
+        </fieldset>
+      </form>
+    </div>
+  </div>
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
   <script src="/assets/fill.js" type="text/javascript"></script>
 </body>

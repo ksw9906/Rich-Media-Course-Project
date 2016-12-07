@@ -13,6 +13,9 @@ const router = (app) => {
   app.get('/templates', mid.requiresLogin, controllers.Fill.templatesPage);
   app.get('/fill/:id', mid.requiresLogin, controllers.Fill.select);
   app.post('/remove/:id', mid.requiresLogin, controllers.Fill.remove);
+  app.post('/savePic', mid.requiresLogin, controllers.Picture.save);
+  app.post('/removePic/:id', mid.requiresLogin, controllers.Picture.remove);
+  app.get('/gallery', mid.requiresLogin, controllers.Picture.galleryPage);
   app.get('/', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
 };
 

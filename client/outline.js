@@ -11,6 +11,7 @@ var DEFAULT_LINE_WIDTH = 3;
 var DEFAULT_STROKE_STYLE = "Black";
 var TOOL_RECTANGLE = "toolRectangle";
 var TOOL_CIRCLE = "toolCircle";
+var TOOL_LINE = "toolLine";
 
 var draws = [];
 
@@ -30,6 +31,11 @@ const draw = () => {
       topCtx.beginPath();
       topCtx.arc(drawCall.x,drawCall.y,drawCall.rad,0,Math.PI * 2,false);
       topCtx.closePath();
+      topCtx.stroke();
+    } else if(drawCall.shape === 'line'){
+      topCtx.beginPath();
+      topCtx.moveTo(drawCall.x, drawCall.y);
+      topCtx.lineTo(drawCall.x2, drawCall.y2);
       topCtx.stroke();
     }
 
@@ -71,8 +77,6 @@ function init(){
     function doLineWidthChange (e) {
         lineWidth = e.target.value;
     }
-    
-//    setColorEvents();
 
     document.querySelector('#toolChooser').onchange = function(e){
         currentTool = e.target.value;
@@ -98,9 +102,13 @@ function doMousedown(e){
 
     switch(currentTool){
         case TOOL_RECTANGLE:
+//            origin.x = mouse.x;
+//            origin.y = mouse.y;
+//            break;
+        case TOOL_LINE:
             origin.x = mouse.x;
             origin.y = mouse.y;
-            break;
+            break;        
         case TOOL_CIRCLE:
             origin.x = mouse.x;
             origin.y = mouse.y;
@@ -131,6 +139,19 @@ function doMousemove(e) {
 
             topCtx.strokeRect(rectX,rectY,rectW,rectH);
             break;
+        
+        case TOOL_LINE:
+            topCtx.strokeStyle = strokeStyle;
+            topCtx.lineWidth = lineWidth;
+
+            topCtx.beginPath();
+            topCtx.moveTo(origin.x, origin.y);
+            topCtx.lineTo(mouse.x, mouse.y);
+
+            clearTopCanvas();
+
+            topCtx.stroke();
+            break;
 
         case TOOL_CIRCLE:
             circX = Math.min(mouse.x,origin.x);
@@ -157,22 +178,31 @@ function doMousemove(e) {
 
 function doMouseup(e) {
     switch(currentTool){
-        case TOOL_RECTANGLE:
-            if(dragging){
-                ctx.drawImage(topCavas,0,0);
-                clearTopCanvas();
-            }
-            draws[draws.length] = {shape:'rect', x:rectX, y:rectY, w:rectW, h:rectH, stroke: strokeStyle, line: lineWidth};
-            draw();
-            break;
-        case TOOL_CIRCLE:
-            if(dragging){
-                ctx.drawImage(topCavas,0,0);
-                clearTopCanvas();
-            }
-            draws[draws.length] = {shape:'circle', x:origin.x, y:origin.y, rad:circRad, stroke: strokeStyle, line: lineWidth};
-            draw();
-            break;
+      case TOOL_RECTANGLE:
+        if(dragging){
+            ctx.drawImage(topCavas,0,0);
+            clearTopCanvas();
+        }
+        draws[draws.length] = {shape:'rect', x:rectX, y:rectY, w:rectW, h:rectH, line: lineWidth};
+        draw();
+        break;
+      case TOOL_LINE:
+        var mouse = getMouse(e);
+        if(dragging){
+          ctx.drawImage(topCavas,0,0);
+          clearTopCanvas();
+        }
+        draws[draws.length] = {shape:'line', x:origin.x, y:origin.y, x2:mouse.x, y2: mouse.y, line: lineWidth};
+        draw();
+        break;
+      case TOOL_CIRCLE:
+        if(dragging){
+          ctx.drawImage(topCavas,0,0);
+          clearTopCanvas();
+        }
+        draws[draws.length] = {shape:'circle', x:origin.x, y:origin.y, rad:circRad,  line: lineWidth};
+        draw();
+        break;
     }
 
     dragging = false;
