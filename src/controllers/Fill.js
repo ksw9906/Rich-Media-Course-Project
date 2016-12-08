@@ -23,12 +23,7 @@ const templatesPage = (req, res) => {
 };
 
 const saveDraw = (req, res) => {
-  if (!req.body.name) {
-    return res.status(400).json({ error: 'Name required' });
-  }
-
   const drawData = {
-    name: req.body.name,
     calls: req.body.calls,
     owner: req.session.account._id,
   };

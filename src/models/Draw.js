@@ -8,15 +8,8 @@ let DrawModel = {};
 // mongoose.Types.ObjectID is a function that converts
 // string ID to real mongo ID
 const convertId = mongoose.Types.ObjectId;
-const setName = name => _.escape(name).trim();
 
 const DrawSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true,
-    set: setName,
-  },
   owner: {
     type: mongoose.Schema.ObjectId,
     required: true,
@@ -29,7 +22,6 @@ const DrawSchema = new mongoose.Schema({
 });
 
 DrawSchema.statics.toAPI = doc => ({
-  name: doc.name,
   calls: doc.calls,
 });
 
@@ -38,7 +30,7 @@ DrawSchema.statics.findByOwner = (ownerId, callback) => {
     owner: convertId(ownerId),
   };
 
-  return DrawModel.find(search).select('name calls').exec(callback);
+  return DrawModel.find(search).select('calls').exec(callback);
 };
 
 DrawModel = mongoose.model('Draw', DrawSchema);

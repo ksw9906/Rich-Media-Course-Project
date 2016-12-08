@@ -32,9 +32,13 @@ const init = () =>{
       canvas.style.cursor = "default";
       
       var deleteButton = document.createElement("p");
+      console.log(deleteButton);
       deleteButton.classList.add("deleteButton");
       deleteButton.classList.add("btn");
-      deleteButton.classList.add("btn-default");
+      deleteButton.classList.add("btn-default");    
+      deleteButton.setAttribute("data-toggle","tooltip");
+      deleteButton.setAttribute("data-placement","bottom");
+      deleteButton.setAttribute("title","delete");
       deleteButton.onclick = (e) => {
         var target = $(e.target);
         var id = target[0].parentElement.id;
@@ -71,6 +75,9 @@ const init = () =>{
       exportButton.classList.add("exportButton");
       exportButton.classList.add("btn");
       exportButton.classList.add("btn-default");
+      exportButton.setAttribute("data-toggle","tooltip");
+      exportButton.setAttribute("data-placement","bottom");
+      exportButton.setAttribute("title","export");
       exportButton.onclick = (e) => {
         var target = $(e.target)[0].parentNode.children[0];
         // open a new window and load the image in it

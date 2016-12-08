@@ -43,21 +43,6 @@
   <p id="lineWidth">3</p>
   <p id="plus"></p>
   
-<!--
-  <select id="lineWidthChooser" class="form-control">
-      <option value="1">1</option>
-      <option value="2">2</option>
-      <option value="3" selected>3</option>
-      <option value="4">4</option>
-      <option value="5">5</option>
-      <option value="6">6</option>
-      <option value="7">7</option>
-      <option value="8">8</option>
-      <option value="9">9</option>
-      <option value="10">10</option>
-  </select>
--->
-  
   <div id="controls" class="btn-group-vertical">
     <a href="#" class="btn btn-default" id="clearButton">Clear</a>
     <a href="#" class="btn btn-default" id="saveButton">Save</a>
@@ -69,13 +54,18 @@
       <form id="saveForm">
         <fieldset>
           <legend>Save Template</legend>
-          <label for="templateName" class="col-lg-2 control-label">Name</label>
-          <input type="text" class="form-control" id="templateName" placeholder="Template Name" />
           <input type="hidden" name="_csrf" id="csrf" value="{{csrfToken}}" />
           <button type="button" id="formSaveButton" class="btn btn-primary modalButton">Save</button>
           <button type="button" id="cancelButton" class="btn btn-default modalButton">Cancel</button>
         </fieldset>
       </form>
+    </div>
+  </div>
+  
+  <div id="alertModal" class="modal">
+    <div class="modalContent">
+      <p>Cannot save empty image!</p>
+      <button type="button" id="cancelAlert" class="btn btn-default modalButton">Cancel</button>
     </div>
   </div>
   

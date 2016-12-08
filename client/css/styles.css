@@ -1,125 +1,31 @@
+/*---------Mulitple Pages--------*/
 body {
    font-family: tahoma, verdana, sans serif;
 }
-
+#mainCanvas, #topCavas{
+  position:absolute;
+  left: 20px;
+  top: 90px; 
+}
 #mainCanvas {
    background: #ffffff;
-   position:absolute;
    z-index: 0;
-   left: 20px;
-   top: 90px;
    box-shadow: 0px 0px 8px rgba(0,0,0,0.5);
 }
-
-#controls {
-   position: absolute;
-   z-index: 2;
-   left: 740px;
-   top: 472px;
-   width: 125px;
-}
-#fillControls {
-   position: absolute;
-   z-index: 2;
-   left: 740px;
-   top: 512px;
-   width: 150px;
-}
-
-label{
-  font-size: 12px;
-  margin-right:0.75em;
-}
-
 #topCavas{
   background: rgba(0,0,0,0);
-  position: absolute;
-  left: 20px;
-  top: 90px;
   z-index: 1;
   cursor: pointer;
 }
-
-#colors{
-  position: absolute;
-  top: 115px;
-  left: 740px;
-}
-
-.fillColor{
-  width: 150px !important;
-  height: 30px;
-}
-
-.activeColor{
-  border: solid 2px black;
-}
-
-#presetLabel{
-  position: relative;
-  bottom: 100px;
-}
-
-#strokeLabel{
-  position: absolute;
-  top: 90px;
-  left: 740px;
-}
-
-#toolChooser{
-  position: absolute;
-  top: 110px;
-  left: 740px;
-  width: 125px;
-}
-
-#toolLabel{
-  position: absolute;
-  top: 90px;
-  left: 740px;
-  width: 125px;
-}
-
-#lineWidthChooser{
-  position: absolute;
-  top: 175px;
-  left: 740px;
-  width: 125px;
-}
-
-#lineLabel{
-  position: absolute;
-  top: 155px;
-  left: 740px;
-  width: 125px;
-}
-
 #canvases{
   overflow: auto;
   margin: 10px;
 }
-
 .templateCanvas, .pictureCanvas{
   margin-bottom: 5px;
   box-shadow: 0px 0px 8px rgba(0,0,0,0.5);
   cursor: pointer;
 }
-
-.templateCanvas:hover{
-  box-shadow: 0px 0px 8px 5px rgba(0,0,0,0.5);
-}
-
-#presets{
-  position: relative;
-  bottom: 100px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-td{
-  border: 1px solid black;
-}
-
 /*http://www.w3schools.com/howto/howto_css_modals.asp*/
 .modal {
   display: none;
@@ -132,78 +38,28 @@ td{
   overflow: auto;
   background-color: rgba(0,0,0,0.4);
 }
-
 .modalContent{
   background-color: #f7f7f7;
   margin: 15% auto;
   padding: 20px;
   width: 80%; 
 }
-
 .modalButton{
   margin-top: 10px;
 }
-
 .modalContent label{
   font-size: 12pt;
   right: 10px;
 }
-
-#templates, #pictures{
+#templates,#pictures,#hiddenCanvas,#calls,#loginAlert,#signinAlert,#templateAlert,#fillAlert,#galleryAlert{
   display: none;
 }
-
-#hiddenCanvas{
-  display: none;
-}
-
-#calls{
-  display: none;
-}
-
-#loginAlert, #signinAlert, #templateAlert, #fillAlert, #galleryAlert{
-  display: none;
-}
-
-.mainForm {
-    height: 300px;
-    width: 350px;
-    margin: 0 auto;
-    padding-top: 200px;
-    font-size: 1.2em;
-}
-
-.mainForm h3 {
-    text-align: center;
-}
-
-.mainForm label {
-    display: inline-block;
-    width: 100px;
-    margin-right: 10px;
-    text-align: right;
-    font-size: 15pt;
-}
-
-#user, #pass, #pass2 {
-    text-align: center;
-    font-size: 1.1em;
-    width: 180px;
-    border-radius: 6px;
-}
-
-#user:focus, #pass:focus, #pass2:focus {
-    outline: none;
-    box-shadow: 0px 0px 1px 1px #55acee;
-}
-
 .templateDiv, .pictureDiv{
   width:280px;
   height:auto;
   float:left;
   margin: 5px;
 }
-
 .deleteButton{
   position: relative;
   top: -200px;
@@ -218,6 +74,106 @@ td{
   background-position: center;
 }
 
+/*---------Create Page--------*/
+#controls, #toolChooser, #toolLabel, #lineLabel{
+  position: absolute;
+  left: 740px;
+  width: 125px;
+}
+#controls {
+   z-index: 2;
+   top: 472px;
+}
+#toolChooser{
+  top: 110px;
+}
+#toolLabel{
+  top: 90px;
+}
+#lineLabel{
+  top: 155px;
+}
+#minus,#plus{
+  position: relative;
+  width: 20px;
+  height: 20px;
+}
+#minus{
+/*  https://www.iconfinder.com/iconsets/e-commerce-icon-set*/
+  background-image: url("../img/minus.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  left: 760px;
+  top: 100px;
+}
+#plus{
+/*  https://www.iconfinder.com/iconsets/e-commerce-icon-set*/
+  background-image: url("../img/plus.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  left: 830px;
+  top: 36px;
+}
+#lineWidth{
+  position: relative;
+  left: 800px;
+  top:65px;
+}
+
+/*---------Template Page--------*/
+.templateCanvas:hover{
+  box-shadow: 0px 0px 8px 5px rgba(0,0,0,0.5);
+}
+#selectLabel{
+  position: relative;
+  left: 20px;
+}
+/*---------Fill Page--------*/
+#fillControls {
+  position: absolute;
+  z-index: 2;
+  left: 740px;
+  top: 512px;
+  width: 150px;
+}
+.activeColor{
+  border: solid 2px black;
+}
+#presetLabel,#presets,#sliders{
+  position: relative;
+  bottom: 100px;
+}
+#presets{
+  margin-left: auto;
+  margin-right: auto;
+}
+td{
+  border: 1px solid black;
+}
+#colorPicker{
+  position: absolute;
+  top: 90px;
+  left: 740px;
+  width: 150px;
+}
+#sliders{
+  width: 100px;
+  left: 50px;
+}
+.slider{
+  margin-bottom: 15px;
+}
+#colorSwatch{
+  width: 100px;
+  height: 100px;
+  margin-bottom: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0px 0px 5px black;
+  border: solid 1px black;
+}
+
+/*---------Gallery Page--------*/
 .exportButton{
   position: relative;
   top: -200px;
@@ -232,121 +188,101 @@ td{
   background-position: center;
 }
 
-#minus{
-  width: 20px;
-  height: 20px;
-/*  https://www.iconfinder.com/iconsets/e-commerce-icon-set*/
-  background-image: url("../img/minus.png");
-  background-repeat: no-repeat;
-  background-position: center;
-  position: relative;
-  left: 760px;
-  top: 100px;
+/*---------Login Page and Sign-up Page--------*/
+.mainForm {
+  height: 300px;
+  width: 350px;
+  margin: 0 auto;
+  padding-top: 200px;
+  font-size: 1.2em;
 }
-
-#plus{
-  width: 20px;
-  height: 20px;
-/*  https://www.iconfinder.com/iconsets/e-commerce-icon-set*/
-  background-image: url("../img/plus.png");
-  background-repeat: no-repeat;
-  background-position: center;
-  position: relative;
-  left: 830px;
-  top: 36px;
+.mainForm h3 {
+  text-align: center;
 }
-
-#lineWidth{
-  position: relative;
-  left: 800px;
-  top:65px;
-}
-
-#colorPicker{
-  position: absolute;
-  top: 90px;
-  left: 740px;
-  width: 150px;
-}
-
-#sliders{
+.mainForm label {
+  display: inline-block;
   width: 100px;
-  position: relative;
-  left: 50px;
-  bottom: 100px;
+  margin-right: 10px;
+  text-align: right;
+  font-size: 15pt;
+}
+#user, #pass, #pass2 {
+  text-align: center;
+  font-size: 1.1em;
+  width: 180px;
+  border-radius: 6px;
+}
+#user:focus, #pass:focus, #pass2:focus {
+  outline: none;
+  box-shadow: 0px 0px 1px 1px #55acee;
 }
 
-.slider{
-  margin-bottom: 15px;
-}
-
-#colorSwatch{
-  width: 100px;
-  height: 100px;
-  margin-bottom: 10px;
-  margin-left: auto;
-  margin-right: auto;
-  box-shadow: 0px 0px 5px black;
-  border: solid 1px black;
-}
-
+/*---------Media-Query Page--------*/
 @media screen and (max-width: 870px){
+/*---------Mulitple Pages--------*/
   #mainCanvas{
-    position: relative;
     top: 0px;
   }
   #topCavas{
-    position: relative;
     top:-500px;
-  }
-  #controls{
-    position: relative;
-    top: -492px;
+  }  
+  #controls, #fillControls{
     left:20px;
     width: 700px;
-    display: inline-block;
+    display: inline-block;    
   }
-  #fillControls{
-    position: relative;
-    top: -492px;
-    left:20px;
-    width: 700px;
-    display: inline-block;
-  }
-  
   #toolLabel, #lineLabel{
-    position: relative;
     top: -492px;
     left: 20px;  
   }
-  #toolChooser, #lineWidthChooser{
-    position: relative;
+  #toolChooser{
     top: -492px;
     left: 20px;
     width:700px;
     margin-bottom: 10px;
-  }
-  #colors{
+  }  
+  #mainCanvas,#topCavas,#controls,#fillControls,#toolLabel,#lineLabel,#toolChooser,#minus,#plus,#lineWidth,#colorPicker,#rLabel,#gLabel,#bLabel,#sliders{
     position: relative;
-    top: -492px;
+  }
+/*---------Create Page--------*/
+  #controls{
+    top: -542px;
+  }
+  #minus{
+    left: 30px;
+    top: -485px;
+  }
+  #plus{
+    left: 100px;
+    top: -548px;
+  }
+  #lineWidth{
+    left: 70px;
+    top: -517px;
+  }  
+
+/*---------Fill Page--------*/
+  #fillControls{
+    top: -820px;
+  }   
+  #colorPicker{
+    top: -490px;
     left: 20px;
-    width: 700px;
-    display: inline-flex;
-    margin-bottom: 10px;
   }
-  .fillColor{
-    width: 125px !important;
-    height: 30px;
-    border-radius: 0px !important;
+  #rLabel, #gLabel, #bLabel{
+    left: 150px;
+    top: -105px;
   }
-  #red{
-    position: relative;
-    bottom:1px;
-    border-bottom-left-radius: 4px !important;
-    border-top-left-radius: 4px !important;
+  #sliders{
+    left: 200px;
+    top:-205px;
   }
-  #white{
-    border-bottom-right-radius: 4px !important;
-    border-top-right-radius: 4px !important;
+  #presetLabel{
+    left: 320px;
+    top:-350px;
+  }
+  #presets{
+    left: 340px;
+    top: -351px;
   }
 }

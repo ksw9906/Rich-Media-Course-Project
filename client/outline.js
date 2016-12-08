@@ -86,12 +86,6 @@ function init(){
       }
     }
 
-//    document.querySelector('#lineWidthChooser').onchange = doLineWidthChange;
-//
-//    function doLineWidthChange (e) {
-//        lineWidth = e.target.value;
-//    }
-
     document.querySelector('#toolChooser').onchange = function(e){
         currentTool = e.target.value;
         console.log("currentTool=" + currentTool);
@@ -242,42 +236,51 @@ function doClear(){
 }
 
 function doSave(){
-  var modal = document.getElementById('saveModal');
-  modal.style.display = "block";
   
-  document.getElementById('cancelButton').onclick = () => {
-    modal.style.display = "none";
-  };
-  
-  document.getElementById('formSaveButton').onclick = (e) => {
-    e.preventDefault();
-    
-    var data = {
-      name: document.getElementById("templateName").value,
-      _csrf: document.getElementById("csrf").value,
-      calls: draws,
+  if(draws.length > 0){
+    var modal = document.getElementById('saveModal');
+    modal.style.display = "block";
+
+    document.getElementById('cancelButton').onclick = () => {
+      modal.style.display = "none";
     };
-    
-    console.log(data);
-    
-    $.ajax({
-      cache: false,
-      type: "POST",
-      url: "/save",
-      data: data,
-      dataType: "json",
-      success: (result, status, xhr) => {
-        console.log("success");
-        window.location = result.redirect;
-      },
-      error: (xhr, status, error) => {
-          const messageObj = JSON.parse(xhr.responseText);
-          console.log(messageObj.error);
-      }
-    });
-    
-    return false;
-  };
+
+    document.getElementById('formSaveButton').onclick = (e) => {
+      e.preventDefault();
+
+      var data = {
+        _csrf: document.getElementById("csrf").value,
+        calls: draws,
+      };
+
+      console.log(data);
+
+      $.ajax({
+        cache: false,
+        type: "POST",
+        url: "/save",
+        data: data,
+        dataType: "json",
+        success: (result, status, xhr) => {
+          console.log("success");
+          window.location = result.redirect;
+        },
+        error: (xhr, status, error) => {
+            const messageObj = JSON.parse(xhr.responseText);
+            console.log(messageObj.error);
+        }
+      });
+
+      return false;
+    };
+  } else {
+    var modal = document.getElementById('alertModal');
+    modal.style.display = "block";
+
+    document.getElementById('cancelAlert').onclick = () => {
+      modal.style.display = "none";
+    };
+  }
  }
 
 
