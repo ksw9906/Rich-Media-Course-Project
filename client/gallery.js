@@ -1,29 +1,31 @@
 "use strict";
+
+//Creates the galley canvases, the export and delete buttons, and sets up the images
+//on the canvases
 const init = () =>{
-  
-  var pictureUrls = document.getElementById("pictures").children[0].children;
-  var urls = [];
-  for(var i = 0;i < pictureUrls.length;i++){
+  let pictureUrls = document.getElementById("pictures").children[0].children;
+  let urls = [];
+  for(let i = 0;i < pictureUrls.length;i++){
     urls[i] = {};
     urls[i].url = pictureUrls[i].innerHTML;
     urls[i].id = pictureUrls[i].id;
   }
   
-  var canvases = document.getElementById("canvases");
-  var width = 280;
-  var height = 200;
-  var horizPadding = 20;
+  let canvases = document.getElementById("canvases");
+  let width = 280;
+  let height = 200;
+  let horizPadding = 20;
   
-  var hiddenCanvas = document.querySelector('#hiddenCanvas');
-  var ctx = hiddenCanvas.getContext('2d');
+  let hiddenCanvas = document.querySelector('#hiddenCanvas');
+  let ctx = hiddenCanvas.getContext('2d');
   
   if(urls.length > 0){
-    for(var i = 0; i < urls.length; i++){
-      var div = document.createElement("div");
+    for(let i = 0; i < urls.length; i++){
+      let div = document.createElement("div");
       div.className = "pictureDiv";
       div.id = urls[i].id;
       
-      var canvas = document.createElement("canvas");
+      let canvas = document.createElement("canvas");
       canvas.width = width;
       canvas.height = height;
       canvas.className = "pictureCanvas";
@@ -31,8 +33,7 @@ const init = () =>{
       canvas.style.background = "rgb(255,255,255)";
       canvas.style.cursor = "default";
       
-      var deleteButton = document.createElement("p");
-      console.log(deleteButton);
+      let deleteButton = document.createElement("p");
       deleteButton.classList.add("deleteButton");
       deleteButton.classList.add("btn");
       deleteButton.classList.add("btn-default");    
@@ -40,12 +41,12 @@ const init = () =>{
       deleteButton.setAttribute("data-placement","bottom");
       deleteButton.setAttribute("title","delete");
       deleteButton.onclick = (e) => {
-        var target = $(e.target);
-        var id = target[0].parentElement.id;
-        var url = "/removePic/" + id;
-        var token = document.getElementById("pictures").children[0].id;
+        let target = $(e.target);
+        let id = target[0].parentElement.id;
+        let url = "/removePic/" + id;
+        let token = document.getElementById("pictures").children[0].id;
         
-        var modal = document.getElementById('deleteModal');
+        let modal = document.getElementById('deleteModal');
         modal.style.display = "block";
 
         document.getElementById('cancelButton').onclick = () => {
@@ -71,7 +72,7 @@ const init = () =>{
         };        
       };
       
-      var exportButton = document.createElement("p");
+      let exportButton = document.createElement("p");
       exportButton.classList.add("exportButton");
       exportButton.classList.add("btn");
       exportButton.classList.add("btn-default");
@@ -79,13 +80,13 @@ const init = () =>{
       exportButton.setAttribute("data-placement","bottom");
       exportButton.setAttribute("title","export");
       exportButton.onclick = (e) => {
-        var target = $(e.target)[0].parentNode.children[0];
+        let target = $(e.target)[0].parentNode.children[0];
         // open a new window and load the image in it
         // http://www.w3schools.com/jsref/met_win_open.asp
-        var data = target.toDataURL(); 
-        var windowName = "canvasImage";
-        var windowOptions = "left=0,top=0,width=" + target.width + ",height=" + target.height +",toolbar=0,resizable=0";
-        var myWindow = window.open(data,windowName,windowOptions);
+        let data = target.toDataURL(); 
+        let windowName = "canvasImage";
+        let windowOptions = "left=0,top=0,width=" + target.width + ",height=" + target.height +",toolbar=0,resizable=0";
+        let myWindow = window.open(data,windowName,windowOptions);
         myWindow.resizeTo(target.width,target.height); // needed so Chrome would display image
       };
       
@@ -93,9 +94,9 @@ const init = () =>{
       div.appendChild(deleteButton);
       div.appendChild(exportButton);
       canvases.appendChild(div);
-      var thumbnailCtx = canvas.getContext('2d');    
+      let thumbnailCtx = canvas.getContext('2d');    
 
-      var thumbnail = new Image();
+      let thumbnail = new Image();
       thumbnail.src = urls[i].url;
       thumbnailCtx.drawImage(thumbnail,0,0,width,height);
     }    

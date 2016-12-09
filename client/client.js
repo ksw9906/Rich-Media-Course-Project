@@ -1,5 +1,4 @@
 $(document).ready(() => {
-
     const handleError = (message, signIn) => {
       if(signIn){
         $("#signinAlert").css("display","block");  

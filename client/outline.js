@@ -1,26 +1,24 @@
 "use strict";
-window.onload = init;
-
-// GLOBALS
-var canvas,ctx,dragging=false,lineWidth,strokeStyle;
-var currentTool, fillStyle, origin, topCavas, topCtx;
-var rectX,rectY,rectW,rectH,circX,circY,circRad;
-
+// VARIABLES
+let canvas,ctx,dragging=false,lineWidth,strokeStyle;
+let currentTool, fillStyle, origin, topCavas, topCtx;
+let rectX,rectY,rectW,rectH,circX,circY,circRad;
 // CONSTANTS
-var DEFAULT_LINE_WIDTH = 3;
-var DEFAULT_STROKE_STYLE = "Black";
-var TOOL_RECTANGLE = "toolRectangle";
-var TOOL_CIRCLE = "toolCircle";
-var TOOL_LINE = "toolLine";
-
-var draws = [];
+let DEFAULT_LINE_WIDTH = 3;
+let DEFAULT_STROKE_STYLE = "Black";
+let TOOL_RECTANGLE = "toolRectangle";
+let TOOL_CIRCLE = "toolCircle";
+let TOOL_LINE = "toolLine";
+let draws = [];
 
 // FUNCTIONS
+
+//Draws the shapes drawn by the user
 const draw = () => {
   topCtx.globalAlpha = 1;
   doClear();
   
-  for(var i = 0; i < draws.length; i++){
+  for(let i = 0; i < draws.length; i++){
     const drawCall = draws[i];
     topCtx.strokeStyle = drawCall.stroke;
     topCtx.lineWidth = drawCall.line;
@@ -42,77 +40,16 @@ const draw = () => {
     ctx.drawImage(topCavas,0,0);
     clearTopCanvas();    
   }
-  console.log(draws);
 };
 
-// FUNCTIONS
-function init(){
-    // initialize some globals
-    canvas = document.querySelector('#mainCanvas');
-    ctx = canvas.getContext('2d');
-    lineWidth = DEFAULT_LINE_WIDTH;
-    strokeStyle = DEFAULT_STROKE_STYLE;
-    currentTool = TOOL_RECTANGLE;
-    origin = {}; // empty object
-    topCavas = document.querySelector('#topCavas');
-    topCtx = topCavas.getContext('2d');
-
-    // set initial properties of the graphics context 
-    topCtx.lineWidth = ctx.lineWidth = lineWidth;
-    topCtx.strokeStyle = ctx.strokeStyle = strokeStyle;
-    topCtx.lineCap = ctx.lineCap = "round"; // "butt", "round", "square" (default "butt")
-    topCtx.lineJoin = ctx.lineJoin = "round"; // "round", "bevel", "miter" (default "miter")
-
-
-    drawGrid(ctx,'lightgray',10,10);
-
-    // Hook up event listeners
-    topCavas.onmousedown = doMousedown;
-    topCavas.onmousemove = doMousemove;
-    topCavas.onmouseup = doMouseup;
-    topCavas.onmouseout = doMouseout;
-
-    document.getElementById("plus").onclick = () => {
-      if(lineWidth < 10){
-        lineWidth++;
-        document.getElementById("lineWidth").innerHTML = lineWidth;
-      }
-    }
-    
-    document.getElementById("minus").onclick = () => {
-      if(lineWidth > 0){
-        lineWidth--;
-        document.getElementById("lineWidth").innerHTML = lineWidth;
-      }
-    }
-
-    document.querySelector('#toolChooser').onchange = function(e){
-        currentTool = e.target.value;
-        console.log("currentTool=" + currentTool);
-    }
-
-    document.querySelector("#clearButton").onclick = function(){
-      draws = [];
-      doClear();
-    };
-    document.querySelector("#saveButton").onclick = doSave;
-    document.querySelector("#undoButton").onclick = function(){
-      draws.pop();
-      draw();
-    }
-}
-
-
 // EVENT CALLBACK FUNCTIONS
-function doMousedown(e){
+//starts creating the shape when user clicks
+const doMousedown = (e) => {
     dragging = true;
-    var mouse = getMouse(e);
+    let mouse = getMouse(e);
 
     switch(currentTool){
         case TOOL_RECTANGLE:
-//            origin.x = mouse.x;
-//            origin.y = mouse.y;
-//            break;
         case TOOL_LINE:
             origin.x = mouse.x;
             origin.y = mouse.y;
@@ -122,14 +59,16 @@ function doMousedown(e){
             origin.y = mouse.y;
             break;
     }		
-}
+};
 
-function doMousemove(e) {
+//tracks the size and position of the current shape as the
+//user moves the mouse
+const doMousemove = (e) => {
     // bail out if the mouse button is not down
     if(! dragging) return;
 
     // get location of mouse in canvas coordiates
-    var mouse =  getMouse(e);
+    let mouse =  getMouse(e);
 
     switch(currentTool)
     {
@@ -164,8 +103,8 @@ function doMousemove(e) {
         case TOOL_CIRCLE:
             circX = Math.min(mouse.x,origin.x);
             circY = Math.min(mouse.y,origin.y);
-            var circW = Math.abs(mouse.x - origin.x);
-            var circH = Math.abs(mouse.y - origin.y);
+            let circW = Math.abs(mouse.x - origin.x);
+            let circH = Math.abs(mouse.y - origin.y);
             circRad = Math.sqrt((circW * circW) + (circH * circH)); 
 
             topCtx.strokeStyle = strokeStyle;
@@ -181,10 +120,10 @@ function doMousemove(e) {
 
             break;
     }
+};
 
-}
-
-function doMouseup(e) {
+//Adds the current shape to the draws array
+const doMouseup = (e) => {
     switch(currentTool){
       case TOOL_RECTANGLE:
         if(dragging){
@@ -195,7 +134,7 @@ function doMouseup(e) {
         draw();
         break;
       case TOOL_LINE:
-        var mouse = getMouse(e);
+        let mouse = getMouse(e);
         if(dragging){
           ctx.drawImage(topCavas,0,0);
           clearTopCanvas();
@@ -214,31 +153,34 @@ function doMouseup(e) {
     }
 
     dragging = false;
-}
+};
 
-// if the user drags out of the canvas
-function doMouseout(e) {
+//cancels out the current shape if the user drags out of the canvas
+const doMouseout = (e) => {
     switch(currentTool){
         case TOOL_RECTANGLE:
             clearTopCanvas();
             break;
     }
     dragging = false;
-}
+};
 
-function clearTopCanvas () {
+//Clears the top canvas
+const clearTopCanvas = () => {
     topCtx.clearRect(0,0,topCtx.canvas.width,topCtx.canvas.height);
-}
+};
 
-function doClear(){
+//clears the bottom canvas
+const doClear = () => {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     drawGrid(ctx,'lightgray', 10, 10);
-}
+};
 
-function doSave(){
+//saves the template to the database
+const doSave = () => {
   
   if(draws.length > 0){
-    var modal = document.getElementById('saveModal');
+    let modal = document.getElementById('saveModal');
     modal.style.display = "block";
 
     document.getElementById('cancelButton').onclick = () => {
@@ -248,12 +190,10 @@ function doSave(){
     document.getElementById('formSaveButton').onclick = (e) => {
       e.preventDefault();
 
-      var data = {
+      let data = {
         _csrf: document.getElementById("csrf").value,
         calls: draws,
       };
-
-      console.log(data);
 
       $.ajax({
         cache: false,
@@ -274,40 +214,29 @@ function doSave(){
       return false;
     };
   } else {
-    var modal = document.getElementById('alertModal');
+    let modal = document.getElementById('alertModal');
     modal.style.display = "block";
 
     document.getElementById('cancelAlert').onclick = () => {
       modal.style.display = "none";
     };
   }
- }
+ };
 
 
 // UTILITY FUNCTIONS
-/*
-These utility functions do not depend on any global variables being in existence, 
-and produce no "side effects" such as changing ctx state variables.
-They are "pure functions" - see: http://en.wikipedia.org/wiki/Pure_function
-*/
-
-// Function Name: getMouse()
 // returns mouse position in local coordinate system of element
 // Author: Tony Jefferson
-// Last update: 3/1/2014
-function getMouse(e){
-    var mouse = {}
+const getMouse = (e) => {
+    let mouse = {}
     mouse.x = e.pageX - e.target.offsetLeft;
     mouse.y = e.pageY - e.target.offsetTop;
     return mouse;
-}
+};
 
-/*
-Function Name: drawGrid()
-Description: Fills the entire canvas with a grid
-Last update: 9/1/2014
-*/
-function drawGrid(ctx, color, cellWidth, cellHeight){
+//Function Name: drawGrid()
+//Description: Fills the entire canvas with a grid
+const drawGrid = (ctx, color, cellWidth, cellHeight) =>{
     // save the current drawing state as it existed before this function was called
     ctx.save()
 
@@ -318,7 +247,7 @@ function drawGrid(ctx, color, cellWidth, cellHeight){
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
     // vertical lines all set!
-    for (var x = cellWidth + 0.5; x < ctx.canvas.width; x += cellWidth) {
+    for (let x = cellWidth + 0.5; x < ctx.canvas.width; x += cellWidth) {
         ctx.beginPath();
         ctx.moveTo(x, 0);
         ctx.lineTo(x, ctx.canvas.height);
@@ -329,7 +258,7 @@ function drawGrid(ctx, color, cellWidth, cellHeight){
         Need horizontal lines!
         You write it!
     */
-    for (var y = cellHeight + 0.5; y < ctx.canvas.height; y += cellHeight) {
+    for (let y = cellHeight + 0.5; y < ctx.canvas.height; y += cellHeight) {
         ctx.beginPath();
         ctx.moveTo(0,y);
         ctx.lineTo(ctx.canvas.width,y);
@@ -339,4 +268,63 @@ function drawGrid(ctx, color, cellWidth, cellHeight){
 
     // restore the drawing state
     ctx.restore();
-}
+};
+
+//Initializes variablesand sets up click events
+const init = () => {
+    // initialize some globals
+    canvas = document.querySelector('#mainCanvas');
+    ctx = canvas.getContext('2d');
+    lineWidth = DEFAULT_LINE_WIDTH;
+    strokeStyle = DEFAULT_STROKE_STYLE;
+    currentTool = TOOL_RECTANGLE;
+    origin = {}; // empty object
+    topCavas = document.querySelector('#topCavas');
+    topCtx = topCavas.getContext('2d');
+
+    // set initial properties of the graphics context 
+    topCtx.lineWidth = ctx.lineWidth = lineWidth;
+    topCtx.strokeStyle = ctx.strokeStyle = strokeStyle;
+    topCtx.lineCap = ctx.lineCap = "round"; // "butt", "round", "square" (default "butt")
+    topCtx.lineJoin = ctx.lineJoin = "round"; // "round", "bevel", "miter" (default "miter")
+
+    drawGrid(ctx,'lightgray',10,10);
+
+    // Hook up event listeners
+    topCavas.onmousedown = doMousedown;
+    topCavas.onmousemove = doMousemove;
+    topCavas.onmouseup = doMouseup;
+    topCavas.onmouseout = doMouseout;
+
+    document.getElementById("plus").onclick = () => {
+      if(lineWidth < 10){
+        lineWidth++;
+        document.getElementById("lineWidth").innerHTML = lineWidth;
+      }
+    };
+    
+    document.getElementById("minus").onclick = () => {
+      if(lineWidth > 0){
+        lineWidth--;
+        document.getElementById("lineWidth").innerHTML = lineWidth;
+      }
+    };
+
+    document.querySelector('#toolChooser').onchange = function(e){
+        currentTool = e.target.value;
+    };
+
+    document.querySelector("#clearButton").onclick = function(){
+      draws = [];
+      doClear();
+    };
+    
+    document.querySelector("#saveButton").onclick = doSave;
+    
+    document.querySelector("#undoButton").onclick = function(){
+      draws.pop();
+      draw();
+    }
+};
+
+window.onload = init;

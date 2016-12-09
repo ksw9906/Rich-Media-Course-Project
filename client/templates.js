@@ -1,4 +1,7 @@
 "use strict";
+
+//Creates the template canvases, the delete buttons, and sets up the templates
+//on the canvases
 const draw = (draws, ctx) => {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   for(var i = 0; i < draws.length; i++){
@@ -24,7 +27,7 @@ const draw = (draws, ctx) => {
   }
 };
 
-const init = () =>{
+const init = () => {
   var drawsArray = document.getElementById("templates").children[0].children;
   
   if(drawsArray.length > 0){
@@ -121,7 +124,6 @@ const init = () =>{
 
       draw(templates[keys[i]].calls, ctx);
       var imgData = hiddenCanvas.toDataURL();
-      console.log(imgData.length);
       var thumbnail = new Image();
       thumbnail.src = imgData;
       thumbnailCtx.drawImage(thumbnail,0,0,width,height);
@@ -130,6 +132,5 @@ const init = () =>{
     $("#templateAlert").css("display","block");
   }
 };
-
 
 window.onload = init;
